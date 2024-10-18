@@ -1,7 +1,14 @@
 import React from 'react'
 import logo from '../assets/logo.png'
+import {useState} from 'react';
 
-const LandingPage = () => {
+const LandingPage = ({ onGetStarted }) => {
+
+    const [isLogin, setIsLogin] = useState(false);
+
+    const HandleIsLogin = () => {
+        setIsLogin(true);
+    }
 
     return (
         <div className="bg-cyan-200 flex flex-col justify-between h-screen">
@@ -34,7 +41,10 @@ const LandingPage = () => {
             </main>
 
             <footer className="flex justify-center pb-8">
-                <button className="bg-teal-500 text-white py-3 px-8 rounded-lg font-bold text-lg transition hover:bg-teal-600 focus:outline-none focus:ring-4 focus:ring-teal-300"> Get Started </button>
+                <button 
+                className="bg-teal-500 text-white py-3 px-8 rounded-lg font-bold text-lg transition hover:bg-teal-600 focus:outline-none focus:ring-4 focus:ring-teal-300"
+                onClick={onGetStarted}
+                > Get Started </button>
             </footer>
 
 
