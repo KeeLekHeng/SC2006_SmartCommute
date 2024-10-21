@@ -1,20 +1,19 @@
-import React from 'react'
-import logo from '../assets/logo.png'
-import {useState} from 'react';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import logo from '../assets/logo.png';
 
-const LandingPage = ({ onGetStarted }) => {
+const LandingPage = () => {
+    const navigate = useNavigate();
 
-    const [isLogin, setIsLogin] = useState(false);
-
-    const HandleIsLogin = () => {
-        setIsLogin(true);
-    }
+    const handleGetStarted = () => {
+        navigate('/login'); // Navigate to the login page
+    };
 
     return (
         <div className="bg-cyan-200 flex flex-col justify-between h-screen">
             <header className="flex justify-center items-center pt-6">
-                <img src={logo} alt="logo" className = "" />
-            </header >
+                <img src={logo} alt="logo" />
+            </header>
 
             <div className="flex justify-center items-center">
                 <h1 className="text-5xl font-bold text-teal-700">SmartCommute</h1>
@@ -42,14 +41,14 @@ const LandingPage = ({ onGetStarted }) => {
 
             <footer className="flex justify-center pb-8">
                 <button 
-                className="bg-teal-500 text-white py-3 px-8 rounded-lg font-bold text-lg transition hover:bg-teal-600 focus:outline-none focus:ring-4 focus:ring-teal-300"
-                onClick={onGetStarted}
-                > Get Started </button>
+                    className="bg-teal-500 text-white py-3 px-8 rounded-lg font-bold text-lg transition hover:bg-teal-600 focus:outline-none focus:ring-4 focus:ring-teal-300"
+                    onClick={handleGetStarted}
+                > 
+                    Get Started 
+                </button>
             </footer>
-
-
         </div>
-    )
-}
+    );
+};
 
-export default LandingPage
+export default LandingPage;
