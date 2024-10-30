@@ -18,7 +18,7 @@ const LoginPage = () => {
 
     if(isSuccess){
       setAlert({show:true, message:"Login Succesful!", type:"success"});
-      navigate('/settings', { state: { alert: { show: true, message: 'Login successful!', type: 'success' } } }); 
+      navigate('/search', { state: { alert: { show: true, message: 'Login successful!', type: 'success' } } }); 
     } else {
       setAlert({show:true, message:"User Not Found, Please Try Again.", type:"error"});
     }
