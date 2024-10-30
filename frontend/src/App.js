@@ -8,6 +8,9 @@ import GpsPermission from "./pages/GpsPermission";
 import {GpsProvider} from './context/GpsContext'; 
 import SearchPage from './pages/SearchPage'
 import ReviewPage from './pages/ReviewPage';
+import SettingsPage from "./pages/SettingsPage";
+import DisplayInfoPage from "./pages/DisplayInfoPage";
+import SearchHistoryPage from "./pages/SearchHistoryPage";
 
 const App = () => {
 
@@ -21,6 +24,9 @@ const App = () => {
         <Route path='/gps' element ={<GpsPermission />} />
         <Route path='/search' element ={<SearchPage />} />
         <Route path='/review' element={<ReviewPage />} />
+        <Route path="/settings" element={<SettingsPage />} />
+        <Route path="/display" element={<DisplayInfoPage />} />
+        <Route path="/searchHistory" element={<SearchHistoryPage />} />
       </Routes>
   </GpsProvider>
     
