@@ -9,10 +9,12 @@ const avatars = {
 
 const initialUser = {
   username: "Thuva",
-  password: "********", // Masked for display
+  password: "password", 
   gender: "Male",
   avatar: avatars.boy,
 };
+// sample data, must recieve the data from BACKEND
+
 
 const DisplayInfoPage = () => {
   const [showEditModal, setShowEditModal] = useState(false);
@@ -32,7 +34,7 @@ const DisplayInfoPage = () => {
     setEditField(field);
     setErrorMessage('');
     setConfirmPassword('');
-    // Initialize temporary values based on the field being edited
+    // have temporary values that store user infot
     if (field === 'username') {
       setTempUsername(userData.username);
     } else if (field === 'password') {
@@ -49,7 +51,7 @@ const DisplayInfoPage = () => {
         setErrorMessage("Passwords do not match.");
         return;
       }
-      setUserData({ ...userData, password: tempPassword });
+      setUserData({ ...userData, password: tempPassword }); 
     } else if (editField === 'gender') {
       const newAvatar = tempGender === "Male" ? avatars.boy : avatars.girl;
       setUserData({ ...userData, gender: tempGender, avatar: newAvatar });
@@ -57,11 +59,11 @@ const DisplayInfoPage = () => {
       setUserData({ ...userData, username: tempUsername });
     }
     setShowEditModal(false);
-  };
+  }; // all this is for local storage. this should be where it is linked to BACKEND
 
   const handleDeleteAccount = () => {
     alert("Account deleted. All data lost.");
-    // Replace with actual deletion logic
+    // Replace with actual deletion from BACKEND
   };
 
   return (

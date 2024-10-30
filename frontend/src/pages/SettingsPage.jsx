@@ -16,13 +16,11 @@ const SettingsPage = () => {
 
     const handleDisplayInfo = () => { 
         alert("Displaying user information..," ); 
-        //route to display info page
         navigate('/display')
     }; 
 
     const handleTravelHistory = () => { 
         alert("Navigating to Travel History..."); 
-        //route to travel history
         navigate('/searchHistory');
     }; 
 

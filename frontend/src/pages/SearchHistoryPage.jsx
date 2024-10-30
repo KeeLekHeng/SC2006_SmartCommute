@@ -11,6 +11,7 @@ const mockSearchHistory = [
   { date: '2024-10-18', start: '3 Changi Business Park Central 1, Singapore 486037', destination: '78 Airport Blvd, Singapore 819666', mode: 'Bus', duration: '30 minutes', cost: '$1.70' },
   { date: '2024-10-17', start: '138 Robinson Road, Singapore 068906', destination: '60 Anson Road, Mapletree Anson, Singapore 079914', mode: 'Walk', duration: '10 minutes', cost: 'Free' },
 ];
+// this is just sample data. must retrieve the user data from BACKEND here
 
 const SearchHistoryPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
