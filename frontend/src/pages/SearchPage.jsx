@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Alert from '../components/Alert';
 import { useNavigate } from 'react-router-dom';
-import { GoogleMap, useJsApiLoader, StandaloneSearchBox, Marker, Polyline } from "@react-google-maps/api";
+import { GoogleMap, useJsApiLoader, StandaloneSearchBox, Marker} from "@react-google-maps/api";
 
 const API_KEY = process.env.REACT_APP_GMAPSAPI;
 const libraries = ['places'];
@@ -177,7 +177,6 @@ const handleDestinationClear = () => {
             {markers.map((marker, index) => (
               <Marker key={index} position={marker.position} title={marker.title} />
             ))}
-            {line && <Polyline path={line.getPath().getArray()} options={{ strokeColor: '#FF0000', strokeWeight: 2 }} />}
           </GoogleMap>
         ) : (
           <div>Loading....</div>
