@@ -159,7 +159,7 @@ const handleDestinationClear = () => {
   };
 
   return (
-    <div className="flex w-full h-[calc(100vh-8rem)] overflow-hidden pt-20">
+    <div className="flex w-full h-[calc(100vh-8rem)] overflow-hidden pt-4">       
       {alert.show && (
         <div className="absolute top-0 left-0 right-0 p-4 z-40">
           <Alert type={alert.type} message={alert.message} onClose={() => setAlert({ ...alert, show: false })} />
