@@ -3,6 +3,10 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const searchSchema = new Schema({
+    username: {
+        type: String,
+        required: true
+    },
     start_location: {
         type: String,
         required: true

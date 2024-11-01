@@ -21,7 +21,7 @@ const checkUserExists = async (req, res) => {
 };
 // Register a new user
 const registerUser = async (req, res) => {
-    const { username, email, password, gender, security } = req.body;
+    const { username, email, password, gender, security, timestamp } = req.body;
 
     try {
         // Check if user already exists
@@ -31,8 +31,8 @@ const registerUser = async (req, res) => {
         }
 
         // Create a new user
-        const user = await User.create({ username, email, password, gender, security, });
-        await newUser.save(); 
+        const user = new User({ username, email, password, gender, security, timestamp });
+        await user.save(); 
        
         res.status(201).json({ message: 'User registered successfully' });
     } catch (error) {
@@ -92,25 +92,24 @@ const changeUserPassword = async (req, res) => {
     }
 };
 
-
-//function to get user details by username
-const getUserDetails = async (req, res) => {
-    try {
-      const user = await UserModel.findOne({ username: req.params.username });
-      if (user) {
-        res.json({ gender: user.gender });
-      } else {
-        res.status(404).json({ error: 'User not found' });
-      }
-    } catch (error) {
-      res.status(500).json({ error: 'Internal server error' });
+const getUserDetails = async  (req, res) => { 
+    const {username} = req.params; 
+    try { 
+        const user = await User.findOne({username}); 
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+        res.status(200).json({ gender: user.gender });
     }
-};
-
+    catch (error) {
+        res.status(500).json({ error: 'Internal server error' });
+    }
+}
 
 module.exports = {
     registerUser,
     loginUser,
     changeUserPassword,
     checkUserExists,
+    getUserDetails,
 };
