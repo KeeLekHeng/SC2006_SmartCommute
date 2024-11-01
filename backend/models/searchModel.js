@@ -10,8 +10,12 @@ const searchSchema = new Schema({
     destination: {
         type: String,
         required: true
-    }
-}, { timestamps: true });
+    }, 
+    timestamp: {
+        type: String, 
+        required: true, 
+    },
+});
 
 // Export the Search model
 const Search = mongoose.model("Search", searchSchema);

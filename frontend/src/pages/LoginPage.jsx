@@ -31,6 +31,7 @@ const LoginPage = () => {
         });
 
         if (response.status === 200) {
+          localStorage.setItem('username', response.data.username);
           navigate('/main', { state: { alert: { show: true, message: 'Login successful!', type: 'success' } } });
         }
     } catch (error) {

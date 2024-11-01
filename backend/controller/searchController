@@ -1,3 +1,4 @@
+const moment = require('moment-timezone');
 const Search = require('../models/searchModel');
 const mongoose = require('mongoose');
 
@@ -13,9 +14,11 @@ const saveSearch = async (req, res) => {
 
     try { 
         const newSearch = await Search.create({ 
-            start_location, destination
+            start_location, destination, timestamp: new Date(), 
         }); 
-        res.status(201).json({message: 'Search saved successfully', search: newSearch }); 
+        await newSearch.save();
+        const localTime = moment(newSearch.createdAt).tz('Asia/Singapore').format('YYYY-MM-DD HH:mm:ss');
+        res.status(201).json({ ...newSearch._doc, localCreatedAt: localTime}); 
     } catch (error) { 
         res.status(400).json({error: error.message}); 
     }
