@@ -9,11 +9,11 @@ const getSearches = async (req, res) => {
 
 
 const saveSearch = async (req, res) => { 
-    const { start_Location, destination} = req.body; 
+    const { start_location, destination} = req.body; 
 
     try { 
         const newSearch = await Search.create({ 
-            start_Location: start_Location, destination: destination,
+            start_location, destination
         }); 
         res.status(201).json({message: 'Search saved successfully', search: newSearch }); 
     } catch (error) { 

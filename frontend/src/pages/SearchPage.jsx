@@ -3,6 +3,7 @@ import Alert from '../components/Alert';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { GoogleMap, useJsApiLoader, StandaloneSearchBox, Marker} from "@react-google-maps/api";
 import axios from 'axios'; 
+import moment from 'moment-timezone';
 
 const API_KEY = process.env.REACT_APP_GMAPSAPI;
 const libraries = ['places'];
@@ -86,9 +87,11 @@ const SearchPage = () => {
 
     console.log("Start location:", startLocation);
     console.log("Destination:", destination);
+
+    const sgTime = moment().tz('Asia/Singapore').format('YYYY-MM-DD HH:mm:ss');
     try { 
       const response = await axios.post('http://localhost:4000/search/', {
-        start_location: startLocation, destination: destination, 
+        start_location: startLocation, destination: destination, timestamp: sgTime, 
       }); 
       if (response.status === 201) { 
         setAlert({ show: true, message: "Search saved to the database successfully!", type: "success" });

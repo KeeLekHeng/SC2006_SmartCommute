@@ -25,6 +25,7 @@ app.use((req, res, next) => {
 app.use('/search', searchRoutes);
 app.use('/authRoutes', userRoutes); 
 
+const PORT = process.env.PORT || 5000; // Fallback to 5000 if PORT is not defined in .env
 // Connect to DB
 mongoose.connect(process.env.MONG_URI)
     .then(() => {
@@ -36,4 +37,3 @@ mongoose.connect(process.env.MONG_URI)
         console.log(error);
     });
 
-const PORT = process.env.PORT || 5000; // Fallback to 5000 if PORT is not defined in .env
