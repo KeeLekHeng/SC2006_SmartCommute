@@ -11,7 +11,7 @@ const {
 
 const router = express.Router();
 
-router.post('/save', saveSearch); 
+router.post('/', saveSearch); 
 
 // GET all searches
 router.get('/', getSearches);

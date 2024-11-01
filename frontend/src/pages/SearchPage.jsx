@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Alert from '../components/Alert';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { GoogleMap, useJsApiLoader, StandaloneSearchBox, Marker} from "@react-google-maps/api";
 import axios from 'axios'; 
 
@@ -15,6 +15,7 @@ const SearchPage = () => {
   const [destination, setDestination] = useState('');
   const [alert, setAlert] = useState({ show: false, message: '', type: '' });
   const [userLocation, setUserLocation] = useState(null);
+  
 
   const [line, setLine] = useState(null);
   const [destinationMarkerPosition, setDestinationMarkerPosition] = useState(null);
@@ -23,6 +24,7 @@ const SearchPage = () => {
   const startRef = useRef(null);
   const destinationRef = useRef(null);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
@@ -81,15 +83,20 @@ const SearchPage = () => {
       window.alert("Both Start Location and Destination fields must be filled!"); 
       return; 
     }
+
+    console.log("Start location:", startLocation);
+    console.log("Destination:", destination);
     try { 
-      await axios.post('/search', {
-        startLocation: startLocation, destination: destination, 
-      });  
-      window.alert("Search saved to the database successfully!")
+      const response = await axios.post('http://localhost:4000/search/', {
+        start_location: startLocation, destination: destination, 
+      }); 
+      if (response.status === 201) { 
+        setAlert({ show: true, message: "Search saved to the database successfully!", type: "success" });
+      }
       navigate('/comparisons'); 
     } catch (error) { 
-      console.error("Error saving search: ", error); 
-      window.alert("Failed to save search to the database."); 
+      const errorMessage = error.response && error.response.data.error ? error.response.data.error : "Failed to save to database!";
+      setAlert({ show: true, message: errorMessage, type: "error" }); 
     }
   }
 

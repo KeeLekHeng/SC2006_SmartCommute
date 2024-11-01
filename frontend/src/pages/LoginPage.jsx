@@ -31,7 +31,6 @@ const LoginPage = () => {
         });
 
         if (response.status === 200) {
-          setAlert({ show: true, message: "Login Successful!", type: "success" });
           navigate('/main', { state: { alert: { show: true, message: 'Login successful!', type: 'success' } } });
         }
     } catch (error) {
