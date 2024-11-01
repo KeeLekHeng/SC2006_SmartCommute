@@ -7,6 +7,21 @@ const getSearches = async (req, res) => {
     res.status(200).json(searches);
 };
 
+
+const saveSearch = async (req, res) => { 
+    const { startLocation, endLocation} = req.body; 
+
+    try { 
+        const newSearch = await Search.create({ 
+            startLocation, endLocation, date: new Date()
+        }); 
+        res.status(201).json({message: 'Search saved successfully', search: newSearch }); 
+    } catch (error) { 
+        res.status(400).json({error: error.message}); 
+    }
+}; 
+
+
 // Get a single search
 const getSearch = async (req, res) => {
     const { id } = req.params;
@@ -80,5 +95,6 @@ module.exports = {
     getSearches,
     getSearch,
     deleteFavourite,
-    updateFavourite
+    updateFavourite, 
+    saveSearch, 
 };

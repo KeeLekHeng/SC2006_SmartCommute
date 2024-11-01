@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import Alert from '../components/Alert';
 import { useNavigate } from 'react-router-dom';
 import { GoogleMap, useJsApiLoader, StandaloneSearchBox, Marker} from "@react-google-maps/api";
+import axios from 'axios'; 
 
 const API_KEY = process.env.REACT_APP_GMAPSAPI;
 const libraries = ['places'];
@@ -74,6 +75,23 @@ const SearchPage = () => {
     bounds.extend(new window.google.maps.LatLng(destination.lat, destination.lng));
     map.fitBounds(bounds);
   };
+
+  const handleSearch = async () => { 
+    if (!startLocation || !destination) {
+      window.alert("Both Start Location and Destination fields must be filled!"); 
+      return; 
+    }
+    try { 
+      await axios.post('/search', {
+        startLocation: startLocation, destination: destination, 
+      });  
+      window.alert("Search saved to the database successfully!")
+      navigate('/comparisons'); 
+    } catch (error) { 
+      console.error("Error saving search: ", error); 
+      window.alert("Failed to save search to the database."); 
+    }
+  }
 
   const handleStartLocationClear = () => {
     setStartLocation('');
@@ -247,7 +265,7 @@ const handleDestinationClear = () => {
             </button>
           </div>
 
-          <button onClick={() => navigate('/comparison')} className="w-full bg-blue-500 text-white p-3 rounded-lg font-medium hover:bg-blue-600 transition duration-200">
+          <button onClick={handleSearch} className="w-full bg-blue-500 text-white p-3 rounded-lg font-medium hover:bg-blue-600 transition duration-200">
             Search
           </button>
         </div>

@@ -5,10 +5,13 @@ const {
     getSearches,
     getSearch,
     deleteFavourite,
-    updateFavourite
+    updateFavourite, 
+    saveSearch, 
 } = require('../controller/searchController');
 
 const router = express.Router();
+
+router.post('/save', saveSearch); 
 
 // GET all searches
 router.get('/', getSearches);
@@ -17,7 +20,7 @@ router.get('/', getSearches);
 router.get('/:id', getSearch);
 
 // POST a new search
-router.post('/', createFavourites);
+router.post('/favourties', createFavourites);
 
 // DELETE a search
 router.delete('/:id', deleteFavourite);
