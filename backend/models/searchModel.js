@@ -16,3 +16,4 @@ const searchSchema = new Schema({
 // Export the Search model
 const Search = mongoose.model("Search", searchSchema);
 module.exports = Search;
+

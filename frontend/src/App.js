@@ -5,13 +5,15 @@ import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import MainApp from "./MainApp"; 
 import GpsPermission from "./pages/GpsPermission";
-import {GpsProvider} from './context/GpsContext'; 
+import {GpsProvider} from './context/GpsContext';
 import SearchPage from './pages/SearchPage'
 import ReviewPage from './pages/ReviewPage';
 import DisplayInfoPage from './pages/DisplayInfoPage'
 import SettingsPage from './pages/SettingsPage'
 import SearchHistoryPage from './pages/SearchHistoryPage'
+import UpdatePassword from './pages/UpdatePassword';
 import ForgetPassword from './pages/ForgetPassword';
+import Comparisons from "./pages/Comparisons";
 
 const App = () => {
 
@@ -28,8 +30,9 @@ const App = () => {
         <Route path='/settings' element={<SettingsPage />} />
         <Route path='/searchHistory' element={<SearchHistoryPage />} />
         <Route path='/display' element={<DisplayInfoPage/>} />
+        <Route path='/update-password' element={<UpdatePassword/>} />
+        <Route path='/comparison' element={<Comparisons/>} />
         <Route path='/forget-password' element={<ForgetPassword/>} />
-
       </Routes>
   </GpsProvider>
     

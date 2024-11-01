@@ -50,7 +50,7 @@ const deleteFavourite = async (req, res) => {
         return res.status(404).json({ error: "No results found" });
     }
 
-    res.status(200).json(search);
+    res.status(200).json(search);           //get back what we delete, then can update list to remove
 };
 
 // Update a favourite

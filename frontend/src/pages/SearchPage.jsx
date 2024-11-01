@@ -102,7 +102,10 @@ const handleDestinationClear = () => {
     const places = ref.getPlaces();
     if (places && places.length > 0) {
         const place = places[0];
-        if (place.geometry && place.geometry.location) {
+        const isInSingapore = place.formatted_address.includes("Singapore");
+
+        //check location if is in Singapore
+        if (isInSingapore && place.geometry && place.geometry.location) {
             const location = place.geometry.location;
 
             const newMarker = {
@@ -117,7 +120,7 @@ const handleDestinationClear = () => {
                 setMarkers((prevMarkers) => prevMarkers
                     .filter(marker => marker.title !== 'Starting Location')
                     .concat(newMarker));
-                
+
                 if (map) {
                     map.setZoom(15);  // Zoom in on starting location
                     map.panTo(newMarker.position);  // Center map on starting location
@@ -140,11 +143,15 @@ const handleDestinationClear = () => {
                     drawLineBetweenMarkers(startLocationMarkerPosition, newMarker.position);
                 }
             }
+        } else {
+            // If not in singapore, ask user enter again (This remains until u can get component restrictions working!!! )
+            setAlert({ show: true, message: 'Please select a location within Singapore.', type: 'error' });
         }
     } else {
         setAlert({ show: true, message: 'Invalid location selected.', type: 'error' });
     }
   };
+
 
   const handleUseCurrentLocation = () => {
     if (userLocation) {
@@ -157,6 +164,25 @@ const handleDestinationClear = () => {
       }
     }
   };
+
+  const handleSearch = () => {
+    if (!startLocation && !destination) {
+        setAlert({ show: true, message: 'Please fill in both starting and destination locations.', type: 'error' });
+    } else if (!startLocation) {
+        setAlert({ show: true, message: 'Please fill in the starting location.', type: 'error' });
+    } else if (!destination) {
+        setAlert({ show: true, message: 'Please fill in the destination location.', type: 'error' });
+    } else if (!startLocationMarkerPosition || !destinationMarkerPosition) {
+        setAlert({ show: true, message: 'Please ensure both markers are placed on the map.', type: 'error' });
+    } else {
+        navigate('/comparison', {
+            state: {              // Passing startLocation and destination to the comparison page
+                startLocation,
+                destination
+            }
+        });
+    }
+};
 
   return (
     <div className="flex w-full h-[calc(100vh-8rem)] overflow-hidden pt-4">       
@@ -247,7 +273,7 @@ const handleDestinationClear = () => {
             </button>
           </div>
 
-          <button onClick={() => navigate('/comparison')} className="w-full bg-blue-500 text-white p-3 rounded-lg font-medium hover:bg-blue-600 transition duration-200">
+          <button onClick={handleSearch} className="w-full bg-blue-500 text-white p-3 rounded-lg font-medium hover:bg-blue-600 transition duration-200">
             Search
           </button>
         </div>
