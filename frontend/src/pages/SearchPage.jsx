@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Alert from '../components/Alert';
 import { useNavigate } from 'react-router-dom';
-import { GoogleMap, useJsApiLoader, StandaloneSearchBox, Marker, Polyline } from "@react-google-maps/api";
+import { GoogleMap, useJsApiLoader, StandaloneSearchBox, Marker} from "@react-google-maps/api";
 
 const API_KEY = process.env.REACT_APP_GMAPSAPI;
 const libraries = ['places'];
@@ -159,7 +159,7 @@ const handleDestinationClear = () => {
   };
 
   return (
-    <div className="flex w-full h-[calc(100vh-8rem)] overflow-hidden pt-20">
+    <div className="flex w-full h-[calc(100vh-8rem)] overflow-hidden pt-4">       
       {alert.show && (
         <div className="absolute top-0 left-0 right-0 p-4 z-40">
           <Alert type={alert.type} message={alert.message} onClose={() => setAlert({ ...alert, show: false })} />
@@ -177,7 +177,6 @@ const handleDestinationClear = () => {
             {markers.map((marker, index) => (
               <Marker key={index} position={marker.position} title={marker.title} />
             ))}
-            {line && <Polyline path={line.getPath().getArray()} options={{ strokeColor: '#FF0000', strokeWeight: 2 }} />}
           </GoogleMap>
         ) : (
           <div>Loading....</div>

@@ -60,4 +60,8 @@ const SettingsPage = () => {
     );
 };
 
+<<<<<<< HEAD
 export default SettingsPage; 
+=======
+export default SettingsPage; 
+>>>>>>> 8d9b1e00cfb4693dbf3a5c352a3d634a66316ee3

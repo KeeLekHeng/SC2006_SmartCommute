@@ -1,35 +1,39 @@
-require('dotenv').config()
+require('dotenv').config();
 
-const express = require('express')
-const mongoose = require('mongoose')
+const express = require('express');
+const mongoose = require('mongoose');
+const app = express();
+const cors = require('cors');                           //need cors to allow interaction between servers
 
-//const travelRoutes = require('./routes/travel')
+// Import routes
+const searchRoutes = require('./routes/search');
+const userRoutes = require('./routes/authRoutes'); 
 
-//express app
-const app = express()
 
 
-//middleware (to get request info in backend)
-app.use(express.json())
+// Middleware
+app.use(express.json());
+app.use(cors());
 
-app.use((req,res,next) => {
-    console.log(req.path, req.method)
-    next()
-})
+// Logger middleware
+app.use((req, res, next) => {
+    console.log(req.path, req.method);
+    next();
+});
 
-//routes
-//app.use('/api/travel', travelRoutes)
+// Routes
+app.use('/search', searchRoutes);
+app.use('/authRoutes', userRoutes); 
 
-//connect to db
-mongoose.connect(process.env.MONGO_URI)
+// Connect to DB
+mongoose.connect(process.env.MONG_URI)
     .then(() => {
-        console.log("connected to databse")
+        app.listen(PORT, () => {
+            console.log('connected to db & listening on port', PORT);
+        });
+    })
+    .catch((error) => {
+        console.log(error);
+    });
 
-        //listen to port
-        app.listen(process.env.PORT, () => {
-            console.log("listening for request on port", process.env.PORT)
-        })
-    })
-    .catch((err) => {
-        console.log(err)
-    })
+const PORT = process.env.PORT || 5000; // Fallback to 5000 if PORT is not defined in .env
