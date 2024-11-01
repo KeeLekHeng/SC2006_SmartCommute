@@ -1,5 +1,6 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useContext } from 'react';
 import Alert from '../components/Alert';
+import { UserContext } from '../context/UserContext';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { GoogleMap, useJsApiLoader, StandaloneSearchBox, Marker} from "@react-google-maps/api";
 import axios from 'axios'; 
@@ -9,6 +10,7 @@ const API_KEY = process.env.REACT_APP_GMAPSAPI;
 const libraries = ['places'];
 
 const SearchPage = () => {
+  const {user: username} = useContext(UserContext);
   const [map, setMap] = useState(null);
   const [markers, setMarkers] = useState([]);
   const [center, setCenter] = useState({ lat: 1.3521, lng: 103.8198 });
@@ -91,7 +93,7 @@ const SearchPage = () => {
     const sgTime = moment().tz('Asia/Singapore').format('YYYY-MM-DD HH:mm:ss');
     try { 
       const response = await axios.post('http://localhost:4000/search/', {
-        start_location: startLocation, destination: destination, timestamp: sgTime, 
+        username, start_location: startLocation, destination: destination, timestamp: sgTime, 
       }); 
       if (response.status === 201) { 
         setAlert({ show: true, message: "Search saved to the database successfully!", type: "success" });

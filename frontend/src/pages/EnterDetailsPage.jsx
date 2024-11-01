@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { useLocation, useNavigate } from 'react-router-dom';
 import boyAvatar from '../assets/boyAvatar.png';
 import girlAvatar from '../assets/girlAvatar.png';
 
@@ -9,6 +10,7 @@ const avatars = {
 };
 
 const EnterDetailsPage = () => {
+    const location = useLocation(); 
     const [selectedGender, setSelectedGender] = useState('');
     const [securityAnswer, setSecurityAnswer] = useState('');
     const { username, password, email } = location.state || {};
@@ -23,13 +25,15 @@ const EnterDetailsPage = () => {
             alert('Please select a gender and answer the security question.');
             return;
         }
+        const sgTime = new Date().toLocaleString('en-SG', { timeZone: 'Asia/Singapore' });
         try {
             const response = await axios.post('http://localhost:4000/authRoutes/register', {
                 username,
                 password,
                 email,
-                gender,
+                gender: selectedGender,
                 security: securityAnswer,
+                timestamp: sgTime
             });
     
             if (response.status === 201) {
@@ -40,15 +44,17 @@ const EnterDetailsPage = () => {
             console.error('Error registering user:', error);
             alert('Registration failed. Please try again.');
         }
-        
-        
-        alert('Details saved successfully!');
-        navigate('/nextPage'); // Navigate to the next step or main app
     };
 
     return (
         <div className="bg-teal-500 flex justify-center items-center h-screen p-4">
             <div className="bg-white p-6 rounded-lg w-full max-w-md h-full max-h-[90vh] shadow-lg overflow-y-auto">
+                {/* Display the username */}
+                {username && (
+                    <h2 className="text-center text-xl font-semibold mb-4 text-gray-700">
+                        Hello, {username}
+                    </h2>
+                )}
                 <div className="flex items-center justify-center mb-6">
                     {selectedGender && (
                         <img
@@ -97,4 +103,4 @@ const EnterDetailsPage = () => {
     );
 };
 
-export default GenderSelectionPage;
+export default EnterDetailsPage;

@@ -31,8 +31,8 @@ const RegisterPage = () => {
         email,
       });
 
-      if (response.status === 201) {
-        navigate('/enter-details', {
+      if (response.status === 200) {
+        navigate('/enterDetails', {
           state: {
             username,
             email,
@@ -42,14 +42,19 @@ const RegisterPage = () => {
         });
       }
     } catch (error) {
-      const errorMessage = error.response && error.response.data.error
-      ? error.response.data.error
-      : "Registration failed, please try again.";
-      setAlert({ show: true, message: errorMessage, type: "error" });
+      if (error.response && error.response.status === 409) {
+        setAlert({ show: true, message: 'User with this username or email already exists.', type: "error" });
+      } else {
+        const errorMessage = error.response && error.response.data.error
+          ? error.response.data.error
+          : "Registration failed, please try again.";
+        setAlert({ show: true, message: errorMessage, type: "error" });
+      }
     }
   }
 
   const handleLoginClick = () => {
+    alert('Please login again to access your account.');
     navigate('/login'); // Navigate to the login page
   };
 
