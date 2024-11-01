@@ -1,21 +1,23 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import Logo from '../assets/logo.png';
 import Alert from '../components/Alert';
+import { UserContext } from '../context/UserContext';
 
 const LoginPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const {setUsername} = useContext(UserContext);
 
   const initialAlert = location.state?.alert || { show: false, message: '', type: '' };
   const [alert, setAlert] = useState(initialAlert);
-  const [username, setUsername] = useState('')
+  const [username, setUsernameInput] = useState('')
   const [password, setPassword] = useState('')
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    if (name === 'username') { setUsername(value); }
+    if (name === 'username') { setUsernameInput(value); }
     if (name === 'password') { setPassword(value); }
   };
 
@@ -31,7 +33,7 @@ const LoginPage = () => {
         });
 
         if (response.status === 200) {
-          localStorage.setItem('username', response.data.username);
+          setUsername(response.data.username); 
           navigate('/main', { state: { alert: { show: true, message: 'Login successful!', type: 'success' } } });
         }
     } catch (error) {

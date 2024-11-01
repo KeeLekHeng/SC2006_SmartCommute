@@ -26,14 +26,20 @@ const RegisterPage = () => {
     
 
     try {
-      const response = await axios.post("http://localhost:4000/authRoutes/register", {
+      const response = await axios.post("http://localhost:4000/authRoutes/check-user", {
         username,
         email,
-        password,
       });
 
       if (response.status === 201) {
-        navigate('/login', { state: { alert: { show: true, message: response.data.message, type: 'success' } } });
+        navigate('/enter-details', {
+          state: {
+            username,
+            email,
+            password,
+            alert: { show: true, message: response.data.message, type: 'success' }
+          }
+        });
       }
     } catch (error) {
       const errorMessage = error.response && error.response.data.error

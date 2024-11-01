@@ -19,8 +19,21 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Please provide a password'],
         minlength: [6, 'Password must be at least 6 characters'],
-    }
-}, { timestamps: true });
+    },
+    gender: {  
+        type: String, 
+        required: true
+    },
+    security: {
+        type: String, 
+        required: true
+    },
+    timestamp: {
+        type: String, 
+        required: true, 
+    },
+    
+});
 
 // Hash password before saving user
 userSchema.pre('save', async function (next) {
