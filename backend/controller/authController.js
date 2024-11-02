@@ -21,7 +21,10 @@ const checkUserExists = async (req, res) => {
 };
 // Register a new user
 const registerUser = async (req, res) => {
-    const { username, email, password, gender, security, timestamp } = req.body;
+    const { username, email, password, fruits, gender } = req.body;
+
+    const lowerCaseEmail = email.toLowerCase();
+    const lowerCaseFruits = fruits.toLowerCase(); // Assuming fruits is a single string
 
     try {
         // Check if user already exists
@@ -31,9 +34,8 @@ const registerUser = async (req, res) => {
         }
 
         // Create a new user
-        const user = new User({ username, email, password, gender, security, timestamp });
-        await user.save(); 
-       
+        const user = await User.create({ username, email: lowerCaseEmail, password, fruits: lowerCaseFruits, gender });
+
         res.status(201).json({ message: 'User registered successfully' });
     } catch (error) {
         res.status(400).json({ error: error.message });
@@ -45,50 +47,100 @@ const loginUser = async (req, res) => {
     const { username, password } = req.body;
 
     try {
-        // Find user by email
-        const user = await User.findOne({ username });
+        console.log(`Login attempt for username: ${username}`);
+        
+        const user = await User.findOne({ username}); // Ensure case-insensitive search
+
+        console.log('Found user:', user); // This will log null if user is not found
+
         if (!user) {
             return res.status(404).json({ error: 'User not found' });
         }
 
-        // Check if password is correct
-        const isMatch = await user.comparePassword(password); // Make sure this method is correctly defined in your User model
+        const isMatch = await user.comparePassword(password);
+        console.log('Password match:', isMatch); // Log the result of password comparison
+
         if (!isMatch) {
             return res.status(401).json({ error: 'Invalid credentials' });
         }
 
-
-        res.status(200).json({ message: 'Logged in successfully' });
+        res.status(200).json({ 
+            message: 'Logged in successfully', 
+            user: { 
+                username: user.username,
+                email: user.email,
+                fruits: user.fruits
+            }
+        });
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
 };
 
-
 // Change user password
 const changeUserPassword = async (req, res) => {
     const { userId } = req.params; // Assuming you're passing the user ID in the route
-    const { currentPassword, newPassword } = req.body;
+    const { newPassword, fruits, email } = req.body;
 
     try {
-        const user = await User.findById(userId);
+        // Normalize input fields to lowercase
+        const lowerCaseEmail = email.toLowerCase();
+        const lowerCaseFruits = fruits.toLowerCase(); 
+
+        const user = await User.findById(userId); // Correcting this line to use userId
         if (!user) {
             return res.status(404).json({ error: "User not found" });
         }
 
-        // Verify current password
-        const isMatch = await user.comparePassword(currentPassword);
-        if (!isMatch) {
-            return res.status(400).json({ error: "Current password is incorrect" });
-        }
+        // Retrieve and send email and favorite fruit
+        const userDetails = {
+            email: user.email,
+            fruits: user.fruits,
+        };
 
         // Hash and set the new password
         user.password = await bcrypt.hash(newPassword, 10);
+        
         await user.save();
 
-        res.status(200).json({ message: "Password updated successfully" });
+        res.status(200).json({ message: "Password updated successfully", user: userDetails });
     } catch (error) {
         res.status(400).json({ error: error.message });
+    }
+};
+
+const forgetPassword = async (req, res) => {
+    const { email, fruits } = req.body;
+
+    try {
+        const lowerCaseEmail = email.toLowerCase();
+        const lowerCaseFruits = fruits.toLowerCase();
+
+        const user = await User.findOne({ email: lowerCaseEmail });
+
+        if (!user) {
+            return res.status(404).json({ error: 'Email not found' });
+        }
+
+        // Use the updated methods for comparison
+        const isMatchEmail = user.compareEmail(lowerCaseEmail);
+        if (!isMatchEmail) {
+            return res.status(401).json({ error: 'Invalid Email' });
+        }
+
+        const isMatchFruit = user.compareFruits(lowerCaseFruits);
+        if (!isMatchFruit) {
+            return res.status(401).json({ error: 'Wrong answer to the security question' });
+        }
+
+        // Reset the password
+        user.password = '12345678';
+        await user.save();
+
+        return res.status(200).json({ message: 'Password reset to default: 12345678. Remember to change it in settings' });
+    } catch (error) {
+        console.error('Error during password reset:', error);
+        return res.status(500).json({ error: 'Server error. Please try again later.' });
     }
 };
 
@@ -106,10 +158,12 @@ const getUserDetails = async  (req, res) => {
     }
 }
 
+
+
 module.exports = {
     registerUser,
     loginUser,
     changeUserPassword,
-    checkUserExists,
+    forgetPassword,
     getUserDetails,
 };
