@@ -98,7 +98,7 @@ const SearchPage = () => {
       if (response.status === 201) { 
         setAlert({ show: true, message: "Search saved to the database successfully!", type: "success" });
       }
-      navigate('/comparisons'); 
+      navigate('/comparisons', { state: { startLocation, destination } }); 
     } catch (error) { 
       const errorMessage = error.response && error.response.data.error ? error.response.data.error : "Failed to save to database!";
       setAlert({ show: true, message: errorMessage, type: "error" }); 
@@ -176,17 +176,37 @@ const handleDestinationClear = () => {
     }
   };
 
-  const handleUseCurrentLocation = () => {
+  const handleUseCurrentLocation = async () => {
     if (userLocation) {
-      setStartLocation('Your Current Location');
-      setStartLocationMarkerPosition(userLocation);
-      setMarkers((prevMarkers) => prevMarkers.filter(marker => marker.title !== 'Starting Location')
-        .concat({ position: userLocation, title: 'Starting Location' }));
-      if (destinationMarkerPosition) {
-        drawLineBetweenMarkers(userLocation, destinationMarkerPosition);
+      try {
+        // Reverse geocode the coordinates to get the actual address
+        const response = await axios.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${userLocation.lat},${userLocation.lng}&key=${API_KEY}`);
+        
+        console.log('Reverse Geocode Response:', response.data); // Log the response to inspect
+
+        if (response.data && response.data.results.length > 0) {
+          const address = response.data.results[0].formatted_address;
+          setStartLocation(address); // Update the input field with the fetched address
+        } else {
+          setStartLocation('Unable to determine address');
+        }
+  
+        // Ensure the marker is set for the current location
+        setStartLocationMarkerPosition(userLocation);
+        setMarkers((prevMarkers) => prevMarkers.filter(marker => marker.title !== 'Starting Location')
+          .concat({ position: userLocation, title: 'Starting Location' }));
+  
+        if (destinationMarkerPosition) {
+          drawLineBetweenMarkers(userLocation, destinationMarkerPosition);
+        }
+      } catch (error) {
+        console.error('Error fetching address:', error);
+        setStartLocation('Unable to fetch address');
       }
     }
   };
+  
+  
 
   return (
     <div className="flex w-full h-[calc(100vh-8rem)] overflow-hidden pt-4">       

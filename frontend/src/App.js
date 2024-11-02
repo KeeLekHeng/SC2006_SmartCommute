@@ -33,7 +33,7 @@ const App = () => {
         <Route path='/searchHistory' element={<SearchHistoryPage />} />
         <Route path='/display' element={<DisplayInfoPage/>} />
         <Route path='/update-password' element={<UpdatePassword/>} />
-        <Route path='/comparison' element={<Comparisons/>} />
+        <Route path='/comparisons' element={<Comparisons/>} />
         <Route path='/forget-password' element={<ForgetPassword/>} />
       </Routes>
   </GpsProvider>
