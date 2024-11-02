@@ -5,28 +5,33 @@ import boyAvatar from "../assets/boyAvatar.png";
 import girlAvatar from "../assets/girlAvatar.png";
 
 const avatars = {
-  boy: boyAvatar,
-  girl: girlAvatar,
+  male: boyAvatar,
+  female: girlAvatar,
 };
 
-const Review = ({ review, onToggleUpvote }) => (
-  <div className="bg-gray-100 p-4 border border-gray-300 rounded mb-4 text-left relative">
-    <div className="flex items-center mb-2">
-      <img src={review.avatar} alt="avatar" className="w-10 h-10 rounded-full mr-2" />
-      <p className="font-bold">{review.username}</p>
+const Review = ({ review, onToggleUpvote }) => {
+  // Determine the avatar based on the gender from the review
+  const avatar = review.gender === 'female' ? avatars.female : avatars.male;
+
+  return (
+    <div className="bg-gray-100 p-4 border border-gray-300 rounded mb-4 text-left relative">
+      <div className="flex items-center mb-2">
+        <img src={avatar} alt="avatar" className="w-10 h-10 rounded-full mr-2" />
+        <p className="font-bold">{review.username}</p>
+      </div>
+      <p>{review.review}</p>
+      <div className="flex justify-between items-center mt-2">
+        <small>{new Date(review.date).toLocaleString()}</small>
+        <button
+          onClick={() => onToggleUpvote(review.username)}
+          className={`p-2 rounded ${review.hasUpvoted ? "bg-green-500 text-white" : "bg-gray-100 text-black"} absolute right-2 top-1/2 transform -translate-y-1/2`}
+        >
+          Upvote ({review.upvotes})
+        </button>
+      </div>
     </div>
-    <p>{review.review}</p>
-    <div className="flex justify-between items-center mt-2">
-      <small>{new Date(review.date).toLocaleString()}</small>
-      <button
-        onClick={() => onToggleUpvote(review.username)}
-        className={`p-2 rounded ${review.hasUpvoted ? "bg-green-500 text-white" : "bg-gray-100 text-black"} absolute right-2 top-1/2 transform -translate-y-1/2`}
-      >
-        Upvote ({review.upvotes})
-      </button>
-    </div>
-  </div>
-);
+  );
+};
 
 const ReviewPage = () => {
   const { user } = useContext(UserContext); // Assuming UserContext holds user data
