@@ -5,16 +5,16 @@ import boyAvatar from '../assets/boyAvatar.png';
 import girlAvatar from '../assets/girlAvatar.png';
 
 const avatars = {
-  boy: boyAvatar,
-  girl: girlAvatar,
+  Male: boyAvatar,
+  Female: girlAvatar,
 };
 
 const DisplayInfoPage = () => {
-  const { user: username, gender } = useContext(UserContext);
+  const { user: username, gender } = useContext(UserContext); // Retrieve username and gender from UserContext
   const [userData, setUserData] = useState({
     username: username || '',
     gender: gender || 'Male',
-    password: '', // This will be temporarily stored locally
+    password: '', // Temporarily stored locally
   });
 
   const [tempUsername, setTempUsername] = useState(userData.username);
@@ -54,7 +54,7 @@ const DisplayInfoPage = () => {
       }
       setUserData((prevData) => ({ ...prevData, password: tempPassword }));
     } else if (editField === 'gender') {
-      const newAvatar = tempGender === 'Male' ? avatars.boy : avatars.girl;
+      const newAvatar = tempGender === 'Male' ? avatars.Male : avatars.Female;
       setUserData((prevData) => ({ ...prevData, gender: tempGender, avatar: newAvatar }));
     } else if (editField === 'username') {
       setUserData((prevData) => ({ ...prevData, username: tempUsername }));
@@ -83,7 +83,7 @@ const DisplayInfoPage = () => {
       <div className="bg-white p-6 rounded-lg w-full max-w-md shadow-lg overflow-y-auto">
         <div className="flex flex-col items-center mb-6">
           <img
-            src={userData.gender === 'Male' ? avatars.boy : avatars.girl}
+            src={userData.avatar}
             alt="User Avatar"
             className="w-32 h-32 rounded-full mb-4 shadow-md"
           />
