@@ -63,12 +63,12 @@ const loginUser = async (req, res) => {
 // Change user password
 const changeUserPassword = async (req, res) => {
     const { userId } = req.params; // Assuming you're passing the user ID in the route
-    const { newPassword, currentPassword, fruits, email } = req.body;
+    const { newPassword, fruits, email } = req.body;
 
     try {
         // Normalize input fields to lowercase
         const lowerCaseEmail = email.toLowerCase();
-        const lowerCaseFruits = fruits.toLowerCase(); // Assuming fruits is a single string
+        const lowerCaseFruits = fruits.toLowerCase(); 
 
         const user = await User.findById(userId); // Correcting this line to use userId
         if (!user) {
@@ -83,13 +83,7 @@ const changeUserPassword = async (req, res) => {
 
         // Hash and set the new password
         user.password = await bcrypt.hash(newPassword, 10);
-        // Update the user's email and fruits fields if provided
-        if (lowerCaseEmail) {
-            user.email = lowerCaseEmail;
-        }
-        if (lowerCaseFruits) {
-            user.fruits = lowerCaseFruits;
-        }
+        
         await user.save();
 
         res.status(200).json({ message: "Password updated successfully", user: userDetails });
@@ -98,8 +92,61 @@ const changeUserPassword = async (req, res) => {
     }
 };
 
+const forgetPassword = async (req, res) => {
+    const { email, fruits } = req.body;
+
+    try {
+        const lowerCaseEmail = email.toLowerCase();
+        const lowerCaseFruits = fruits.toLowerCase();
+
+        const user = await User.findOne({ email: lowerCaseEmail });
+
+        if (!user) {
+            return res.status(404).json({ error: 'Email not found' });
+        }
+
+        // Use the updated methods for comparison
+        const isMatchEmail = user.compareEmail(lowerCaseEmail);
+        if (!isMatchEmail) {
+            return res.status(401).json({ error: 'Invalid Email' });
+        }
+
+        const isMatchFruit = user.compareFruits(lowerCaseFruits);
+        if (!isMatchFruit) {
+            return res.status(401).json({ error: 'Wrong answer to the security question' });
+        }
+
+        // Reset the password
+        user.password = '12345678';
+        await user.save();
+
+        return res.status(200).json({ message: 'Password reset to default: 12345678. Remember to change it in settings' });
+    } catch (error) {
+        console.error('Error during password reset:', error);
+        return res.status(500).json({ error: 'Server error. Please try again later.' });
+    }
+};
+
+const getUserDetails = async  (req, res) => { 
+    const {username} = req.params; 
+    try { 
+        const user = await User.findOne({username}); 
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+        res.status(200).json({ gender: user.gender });
+    }
+    catch (error) {
+        res.status(500).json({ error: 'Internal server error' });
+    }
+}
+
+
+
 module.exports = {
     registerUser,
     loginUser,
     changeUserPassword,
+    forgetPassword,
+    getUserDetails,
 };

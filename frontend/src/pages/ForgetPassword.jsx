@@ -11,29 +11,28 @@ const ForgetPasswordPage = () => {
 
   const handleSendClick = async () => {
     try {
-      const response = await fetch('http://localhost:4000/authRoutes/forgot-password', {
+      const response = await fetch('http://localhost:4000/authRoutes/forget', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, fruits }),
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        setAlert({ show: true, message: `Your password has been reset to: ${data.defaultPassword}`, type: 'success' });
+        setAlert({ show: true, message: data.message, type: 'success' });
       } else {
         setAlert({ show: true, message: data.error, type: 'error' });
       }
     } catch (error) {
       console.error('Error:', error);
-      setAlert({ show: true, message: 'An unexpected error occurred. Please try again.', type: 'error' });
+      setAlert({ show: true, message: 'An error occurred. Please try again.', type: 'error' });
     }
-  };
+};
+
 
   const handleBackToLogin = () => {
-    navigate('/login'); // Navigate back to the login page
+    navigate('/login');
   };
 
   const closeAlert = () => {
@@ -42,7 +41,6 @@ const ForgetPasswordPage = () => {
 
   return (
     <div className="flex items-center justify-center h-screen bg-cyan-200 overflow-hidden">
-      {/* Show alert if it is visible */}
       <div className="absolute top-0 left-0 right-0 p-4">
         {alert.show && <Alert type={alert.type} message={alert.message} onClose={closeAlert} />}
       </div>
@@ -64,7 +62,7 @@ const ForgetPasswordPage = () => {
             onChange={(e) => setEmail(e.target.value)}
             className="w-full mb-6 p-3 border border-gray-300 rounded-lg"
           />
-          <label className="block text-gray-700 text-left mb-2 text-lg">What is Your Favorite Fruit</label>
+          <label className="block text-gray-700 text-left mb-2 text-lg">Answer Security Question (Favorite Fruit)</label>
           <input
             type="text"
             placeholder="Favorite Fruit"

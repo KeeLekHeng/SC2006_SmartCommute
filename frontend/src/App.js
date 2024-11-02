@@ -6,6 +6,7 @@ import RegisterPage from "./pages/RegisterPage";
 import MainApp from "./MainApp"; 
 import GpsPermission from "./pages/GpsPermission";
 import {GpsProvider} from './context/GpsContext';
+import { UserProvider } from "./context/UserContext";
 import SearchPage from './pages/SearchPage'
 import ReviewPage from './pages/ReviewPage';
 import DisplayInfoPage from './pages/DisplayInfoPage'
@@ -18,6 +19,7 @@ import Comparisons from "./pages/Comparisons";
 const App = () => {
 
   return (
+    <UserProvider>
     <GpsProvider>
       <Routes>
         <Route path="/" element={<LandingPage />} />
@@ -35,6 +37,7 @@ const App = () => {
         <Route path='/forget-password' element={<ForgetPassword/>} />
       </Routes>
   </GpsProvider>
+  </UserProvider>
     
   );
 };

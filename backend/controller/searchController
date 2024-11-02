@@ -1,3 +1,4 @@
+const moment = require('moment-timezone');
 const Search = require('../models/searchModel');
 const mongoose = require('mongoose');
 
@@ -7,22 +8,58 @@ const getSearches = async (req, res) => {
     res.status(200).json(searches);
 };
 
+
+const saveSearch = async (req, res) => { 
+    const {username, start_location, destination, timestamp} = req.body; 
+
+    try { 
+        const newSearch = await Search.create({ 
+            username, start_location, destination, timestamp: new Date(), 
+        }); 
+        await newSearch.save();
+        const localTime = moment(newSearch.createdAt).tz('Asia/Singapore').format('YYYY-MM-DD HH:mm:ss');
+        res.status(201).json({ ...newSearch._doc, localCreatedAt: localTime}); 
+    } catch (error) { 
+        res.status(400).json({error: error.message}); 
+    }
+}; 
+
+//get a users search history
+const getUserSearchHistory = async (req, res) => {
+    const { username } = req.params;
+    console.log('getUserSearchHistory function:', getUserSearchHistory);
+  
+    try {
+      const history = await Search.find({ username }).sort({ createdAt: -1 }); // Sorting by most recent first
+  
+      if (!history || history.length === 0) {
+        return res.status(404).json({ message: 'No search history found for this user.' });
+      }
+  
+      res.status(200).json(history);
+    } catch (error) {
+      console.error('Error fetching search history:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  };
+
 // Get a single search
 const getSearch = async (req, res) => {
-    const { id } = req.params;
+    const { username } = req.params;
 
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(404).json({ error: "No such searches" });
+    try {
+        const searchResults = await Search.find({ username });
+
+        if (searchResults.length === 0) {
+            return res.status(404).json({ error: "No results found for this user" });
+        }
+
+        res.status(200).json(searchResults);
+    } catch (error) {
+        res.status(500).json({ error: "An error occurred while retrieving search history" });
     }
-
-    const search = await Search.findById(id);
-
-    if (!search) {
-        return res.status(404).json({ error: "No results found" });
-    }
-
-    res.status(200).json(search);
 };
+
 
 // Create a search favourite
 const createFavourites = async (req, res) => {
@@ -50,7 +87,7 @@ const deleteFavourite = async (req, res) => {
         return res.status(404).json({ error: "No results found" });
     }
 
-    res.status(200).json(search);           //get back what we delete, then can update list to remove
+    res.status(200).json(search);
 };
 
 // Update a favourite
@@ -80,5 +117,7 @@ module.exports = {
     getSearches,
     getSearch,
     deleteFavourite,
-    updateFavourite
+    updateFavourite, 
+    saveSearch, 
+    getUserSearchHistory,
 };

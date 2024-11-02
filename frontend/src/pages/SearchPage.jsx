@@ -1,12 +1,16 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useContext } from 'react';
 import Alert from '../components/Alert';
-import { useNavigate } from 'react-router-dom';
+import { UserContext } from '../context/UserContext';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { GoogleMap, useJsApiLoader, StandaloneSearchBox, Marker} from "@react-google-maps/api";
+import axios from 'axios'; 
+import moment from 'moment-timezone';
 
 const API_KEY = process.env.REACT_APP_GMAPSAPI;
 const libraries = ['places'];
 
 const SearchPage = () => {
+  const {user: username} = useContext(UserContext);
   const [map, setMap] = useState(null);
   const [markers, setMarkers] = useState([]);
   const [center, setCenter] = useState({ lat: 1.3521, lng: 103.8198 });
@@ -14,6 +18,7 @@ const SearchPage = () => {
   const [destination, setDestination] = useState('');
   const [alert, setAlert] = useState({ show: false, message: '', type: '' });
   const [userLocation, setUserLocation] = useState(null);
+  
 
   const [line, setLine] = useState(null);
   const [destinationMarkerPosition, setDestinationMarkerPosition] = useState(null);
@@ -22,6 +27,7 @@ const SearchPage = () => {
   const startRef = useRef(null);
   const destinationRef = useRef(null);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
@@ -75,6 +81,30 @@ const SearchPage = () => {
     map.fitBounds(bounds);
   };
 
+  const handleSearch = async () => { 
+    if (!startLocation || !destination) {
+      window.alert("Both Start Location and Destination fields must be filled!"); 
+      return; 
+    }
+
+    console.log("Start location:", startLocation);
+    console.log("Destination:", destination);
+
+    const sgTime = moment().tz('Asia/Singapore').format('YYYY-MM-DD HH:mm:ss');
+    try { 
+      const response = await axios.post('http://localhost:4000/search/', {
+        username, start_location: startLocation, destination: destination, timestamp: sgTime, 
+      }); 
+      if (response.status === 201) { 
+        setAlert({ show: true, message: "Search saved to the database successfully!", type: "success" });
+      }
+      navigate('/comparisons'); 
+    } catch (error) { 
+      const errorMessage = error.response && error.response.data.error ? error.response.data.error : "Failed to save to database!";
+      setAlert({ show: true, message: errorMessage, type: "error" }); 
+    }
+  }
+
   const handleStartLocationClear = () => {
     setStartLocation('');
     setStartLocationMarkerPosition(null);
@@ -102,10 +132,7 @@ const handleDestinationClear = () => {
     const places = ref.getPlaces();
     if (places && places.length > 0) {
         const place = places[0];
-        const isInSingapore = place.formatted_address.includes("Singapore");
-
-        //check location if is in Singapore
-        if (isInSingapore && place.geometry && place.geometry.location) {
+        if (place.geometry && place.geometry.location) {
             const location = place.geometry.location;
 
             const newMarker = {
@@ -120,7 +147,7 @@ const handleDestinationClear = () => {
                 setMarkers((prevMarkers) => prevMarkers
                     .filter(marker => marker.title !== 'Starting Location')
                     .concat(newMarker));
-
+                
                 if (map) {
                     map.setZoom(15);  // Zoom in on starting location
                     map.panTo(newMarker.position);  // Center map on starting location
@@ -143,15 +170,11 @@ const handleDestinationClear = () => {
                     drawLineBetweenMarkers(startLocationMarkerPosition, newMarker.position);
                 }
             }
-        } else {
-            // If not in singapore, ask user enter again (This remains until u can get component restrictions working!!! )
-            setAlert({ show: true, message: 'Please select a location within Singapore.', type: 'error' });
         }
     } else {
         setAlert({ show: true, message: 'Invalid location selected.', type: 'error' });
     }
   };
-
 
   const handleUseCurrentLocation = () => {
     if (userLocation) {
@@ -164,25 +187,6 @@ const handleDestinationClear = () => {
       }
     }
   };
-
-  const handleSearch = () => {
-    if (!startLocation && !destination) {
-        setAlert({ show: true, message: 'Please fill in both starting and destination locations.', type: 'error' });
-    } else if (!startLocation) {
-        setAlert({ show: true, message: 'Please fill in the starting location.', type: 'error' });
-    } else if (!destination) {
-        setAlert({ show: true, message: 'Please fill in the destination location.', type: 'error' });
-    } else if (!startLocationMarkerPosition || !destinationMarkerPosition) {
-        setAlert({ show: true, message: 'Please ensure both markers are placed on the map.', type: 'error' });
-    } else {
-        navigate('/comparison', {
-            state: {              // Passing startLocation and destination to the comparison page
-                startLocation,
-                destination
-            }
-        });
-    }
-};
 
   return (
     <div className="flex w-full h-[calc(100vh-8rem)] overflow-hidden pt-4">       

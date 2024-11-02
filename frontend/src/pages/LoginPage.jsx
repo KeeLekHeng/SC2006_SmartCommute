@@ -1,37 +1,39 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import Logo from '../assets/logo.png';
 import Alert from '../components/Alert';
+import { UserContext } from '../context/UserContext';
 
 const LoginPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const {setUsername} = useContext(UserContext);
 
   const initialAlert = location.state?.alert || { show: false, message: '', type: '' };
   const [alert, setAlert] = useState(initialAlert);
-  const [username, setUsername] = useState('')
+  const [usernameInput, setUsernameInput] = useState('')
   const [password, setPassword] = useState('')
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    if (name === 'username') { setUsername(value); }
+    if (name === 'username') { setUsernameInput(value); }
     if (name === 'password') { setPassword(value); }
   };
 
   const handleLoginClick = async () => {
-    console.log('Username:', username);
+    console.log('Username:', usernameInput);
     console.log('Password:', password);
 
     //connecting login backend
     try {
         const response = await axios.post('http://localhost:4000/authRoutes/login', {
-          username,
+          username: usernameInput,
           password,
         });
 
         if (response.status === 200) {
-          setAlert({ show: true, message: "Login Successful!", type: "success" });
+          setUsername(usernameInput); 
           navigate('/main', { state: { alert: { show: true, message: 'Login successful!', type: 'success' } } });
         }
     } catch (error) {
@@ -79,7 +81,7 @@ const LoginPage = () => {
         <main className="w-full">
           <label className="block text-gray-700 text-left mb-2 text-lg">Enter your Username</label>
           <input type="text" name="username" placeholder="Username" className="w-full mb-4 p-3 border border-gray-300 rounded-lg" 
-          value={username}
+          value={usernameInput}
           onChange={handleInputChange}/>
 
           <label className="block text-gray-700 text-left mb-2 text-lg">Enter your Password</label>

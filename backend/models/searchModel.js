@@ -3,6 +3,10 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const searchSchema = new Schema({
+    username: {
+        type: String,
+        required: true
+    },
     start_location: {
         type: String,
         required: true
@@ -10,10 +14,13 @@ const searchSchema = new Schema({
     destination: {
         type: String,
         required: true
-    }
-}, { timestamps: true });
+    }, 
+    timestamp: {
+        type: String, 
+        required: true, 
+    },
+});
 
 // Export the Search model
 const Search = mongoose.model("Search", searchSchema);
 module.exports = Search;
-
