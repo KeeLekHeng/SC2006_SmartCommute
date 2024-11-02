@@ -28,8 +28,7 @@ const ForgetPasswordPage = () => {
       console.error('Error:', error);
       setAlert({ show: true, message: 'An error occurred. Please try again.', type: 'error' });
     }
-};
-
+  };
 
   const handleBackToLogin = () => {
     navigate('/login');
@@ -40,14 +39,14 @@ const ForgetPasswordPage = () => {
   };
 
   return (
-    <div className="flex items-center justify-center h-screen bg-cyan-200 overflow-hidden">
+    <div className="flex items-center justify-center h-screen bg-gradient-to-r from-cyan-400 to-cyan-600 overflow-hidden">
       <div className="absolute top-0 left-0 right-0 p-4">
         {alert.show && <Alert type={alert.type} message={alert.message} onClose={closeAlert} />}
       </div>
 
-      <div className="w-4/6 max-w-md bg-white shadow-lg rounded-lg p-8 mx-4 flex flex-col items-center">
+      <div className="w-11/12 max-w-lg bg-white shadow-lg rounded-lg p-8 mx-4 flex flex-col items-center">
         <header className="mb-6 text-center">
-          <img src={Logo} alt="logo" className="mb-4 h-56" />
+          <img src={Logo} alt="logo" className="mb-4 h-40" />
           <h2 className="text-teal-700 text-3xl font-bold">SmartCommute</h2>
         </header>
 
@@ -60,7 +59,7 @@ const ForgetPasswordPage = () => {
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full mb-6 p-3 border border-gray-300 rounded-lg"
+            className="w-full mb-6 p-3 border border-gray-300 rounded-lg shadow-sm"
           />
           <label className="block text-gray-700 text-left mb-2 text-lg">Answer Security Question (Favorite Fruit)</label>
           <input
@@ -68,19 +67,18 @@ const ForgetPasswordPage = () => {
             placeholder="Favorite Fruit"
             value={fruits}
             onChange={(e) => setFruits(e.target.value)}
-            className="w-full mb-6 p-3 border border-gray-300 rounded-lg"
+            className="w-full mb-6 p-3 border border-gray-300 rounded-lg shadow-sm"
           />
 
           <button
-            className="w-full bg-teal-500 text-white py-3 px-6 rounded-lg font-bold text-lg hover:bg-teal-600 transition mb-4"
+            className="w-full bg-gradient-to-r from-teal-500 to-teal-700 text-white py-3 px-6 rounded-lg font-bold text-lg hover:from-teal-600 hover:to-teal-800 transition duration-300 mb-4 shadow-md"
             onClick={handleSendClick}
           >
             Change to Default Password
           </button>
 
-          {/* Back to Login Button */}
           <button
-            className="w-full bg-gray-300 text-teal-700 py-3 px-6 rounded-lg font-bold text-lg hover:bg-gray-400 transition"
+            className="w-full bg-gray-300 text-teal-700 py-3 px-6 rounded-lg font-bold text-lg hover:bg-gray-400 transition duration-300 shadow-md"
             onClick={handleBackToLogin}
           >
             Back to Login

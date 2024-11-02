@@ -16,7 +16,7 @@ const UpdatePasswordPage = () => {
 
   const handleSendClick = async () => {
     try {
-        console.log(username); 
+      console.log(username);
       const response = await axios.put(`http://localhost:4000/authRoutes/change-password/${username}`, {
         email,
         fruits: fruit,
@@ -40,7 +40,7 @@ const UpdatePasswordPage = () => {
   const closeAlert = () => setAlert({ ...alert, show: false });
 
   return (
-    <div className="flex items-center justify-center h-screen bg-cyan-200 overflow-hidden">
+    <div className="bg-gradient-to-r from-teal-400 to-teal-600 flex items-center justify-center h-screen overflow-hidden">
       <div className="absolute top-0 left-0 right-0 p-4">
         {alert.show && <Alert type={alert.type} message={alert.message} onClose={closeAlert} />}
       </div>
@@ -82,7 +82,7 @@ const UpdatePasswordPage = () => {
           />
 
           <button
-            className="w-full bg-teal-500 text-white py-3 px-6 rounded-lg font-bold text-lg hover:bg-teal-600 transition mb-4"
+            className="w-full bg-teal-500 text-white py-3 px-6 rounded-lg font-bold text-lg hover:bg-teal-600 transition mb-4 shadow-md hover:shadow-lg"
             onClick={handleSendClick}
           >
             Reset Password

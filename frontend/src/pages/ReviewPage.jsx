@@ -1,32 +1,25 @@
-import React, { useState, useEffect, } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+import axios from 'axios';
+import { UserContext } from '../context/UserContext';
 import boyAvatar from "../assets/boyAvatar.png";
 import girlAvatar from "../assets/girlAvatar.png";
-
-
 
 const avatars = {
   boy: boyAvatar,
   girl: girlAvatar,
 };
 
-const User = {
-  username: "Thuva",
-  avatar: avatars.boy,
-};
-
-const Review = ({ review, onToggleUpvote }) => (        //CAN CONSIDER TO CHANGE THIS TO A COMPONENT TO LOOK NEATER
-
-
+const Review = ({ review, onToggleUpvote }) => (
   <div className="bg-gray-100 p-4 border border-gray-300 rounded mb-4 text-left relative">
     <div className="flex items-center mb-2">
       <img src={review.avatar} alt="avatar" className="w-10 h-10 rounded-full mr-2" />
       <p className="font-bold">{review.username}</p>
     </div>
-    <p>{review.text}</p>
+    <p>{review.review}</p>
     <div className="flex justify-between items-center mt-2">
       <small>{new Date(review.date).toLocaleString()}</small>
       <button
-        onClick={() => onToggleUpvote(review.id)}
+        onClick={() => onToggleUpvote(review.username)}
         className={`p-2 rounded ${review.hasUpvoted ? "bg-green-500 text-white" : "bg-gray-100 text-black"} absolute right-2 top-1/2 transform -translate-y-1/2`}
       >
         Upvote ({review.upvotes})
@@ -36,44 +29,49 @@ const Review = ({ review, onToggleUpvote }) => (        //CAN CONSIDER TO CHANGE
 );
 
 const ReviewPage = () => {
-  const [reviews, setReviews] = useState([
-    // Sample reviews
-  ]);
-
+  const { user } = useContext(UserContext); // Assuming UserContext holds user data
+  const [reviews, setReviews] = useState([]);
   const [newReview, setNewReview] = useState('');
   const [filter, setFilter] = useState('mostRecent');
   const [currentPage, setCurrentPage] = useState(1);
   const reviewsPerPage = 5;
 
-  useEffect(() => {      //BACKEND NEED CHANGE THIS TO NOT LOCAL STORAGE USE MONGODB
-    const storedReviews = localStorage.getItem('reviews');
-    if (storedReviews) {
-      setReviews(JSON.parse(storedReviews));
-    }
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        const response = await axios.get('http://localhost:4000/review/get');
+        setReviews(response.data);
+      } catch (error) {
+        console.error('Error fetching reviews:', error);
+      }
+    };
+    fetchReviews();
   }, []);
 
-  useEffect(() => {       //BACKEND NEED CHANGE THIS TO NOT LOCAL STORAGE USE MONGODB
-    localStorage.setItem('reviews', JSON.stringify(reviews));
-  }, [reviews]);
-
-  const handleSubmitReview = () => {
+  const handleSubmitReview = async () => {
     if (newReview.trim()) {
-      const updatedReviews = [
-        ...reviews,
-        { id: Date.now(), text: newReview, upvotes: 0, hasUpvoted: false, date: new Date(), username: User.username, avatar: User.avatar },
-      ];
-      setReviews(updatedReviews);
-      setNewReview('');
+      try {
+        const response = await axios.post('http://localhost:4000/review/add', {
+          review: newReview,
+          username: user.username,
+          gender: user.gender,
+        });
+        setReviews([...reviews, response.data]);
+        setNewReview('');
+      } catch (error) {
+        console.error('Error submitting review:', error);
+      }
     }
   };
 
-  const handleToggleUpvote = (id) => {
-    const updatedReviews = reviews.map((review) =>
-      review.id === id
-        ? { ...review, upvotes: review.hasUpvoted ? review.upvotes - 1 : review.upvotes + 1, hasUpvoted: !review.hasUpvoted }
-        : review
-    );
-    setReviews(updatedReviews);
+  const handleToggleUpvote = async (username) => {
+    try {
+      const response = await axios.put(`http://localhost:4000/review/${username}/upvote`);
+      const updatedReview = response.data;
+      setReviews(reviews.map(review => (review.username === username ? updatedReview : review)));
+    } catch (error) {
+      console.error('Error toggling upvote:', error);
+    }
   };
 
   const sortedReviews = [...reviews].sort((a, b) => {
@@ -104,7 +102,6 @@ const ReviewPage = () => {
     <div className="bg-teal-500 flex justify-center items-center h-screen">
       <div className="bg-white p-5 rounded-lg w-full max-w-lg h-full max-h-[90vh] shadow-lg overflow-y-auto">
         <h1 className="font-bold text-center mb-4">Leave a Review</h1>
-
         <div className="mb-4">
           <textarea
             value={newReview}
@@ -131,7 +128,7 @@ const ReviewPage = () => {
           <h2 className="font-bold">Reviews</h2>
           {currentReviews.length > 0 ? (
             currentReviews.map((review) => (
-              <Review key={review.id} review={review} onToggleUpvote={handleToggleUpvote} />
+              <Review key={review._id} review={review} onToggleUpvote={handleToggleUpvote} />
             ))
           ) : (
             <p>No reviews yet. Be the first to leave one!</p>

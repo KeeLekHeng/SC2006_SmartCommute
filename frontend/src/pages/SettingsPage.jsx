@@ -11,7 +11,7 @@ const avatars = {
 
 const SettingsPage = () => {
     const navigate = useNavigate();
-    const { user: username, gender } = useContext(UserContext);
+    const { user: username, gender, logout } = useContext(UserContext); // Destructure logout from context
 
     const handleDisplayInfo = () => {
         alert("Displaying user information...");
@@ -25,7 +25,7 @@ const SettingsPage = () => {
 
     const handleLogout = () => {
         alert("Logging out...");
-        // Clear user context or local storage if needed
+        logout(); // Call the logout function to clear user data
         navigate('/login');
     };
 
@@ -56,7 +56,6 @@ const SettingsPage = () => {
                     </button>
                 </div>
             </div>
-
         </div>
     );
 };
