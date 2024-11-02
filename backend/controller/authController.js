@@ -1,24 +1,6 @@
 const User = require('../models/userModel');
 const bcrypt = require('bcrypt');
 
-
-//check if user exist in database
-const checkUserExists = async (req, res) => {
-    const { username, email } = req.body;
-
-    try {
-        // Check if the user with the given username or email exists
-        const user = await User.findOne({ $or: [{ username }, { email }] });
-        
-        if (user) {
-            return res.status(409).json({ message: 'Username or email already exists' });
-        } else {
-            return res.status(200).json({ message: 'Username and email are available' });
-        }
-    } catch (error) {
-        res.status(500).json({ error: 'Internal server error' });
-    }
-};
 // Register a new user
 const registerUser = async (req, res) => {
     const { username, email, password, fruits, gender } = req.body;
@@ -79,35 +61,44 @@ const loginUser = async (req, res) => {
 
 // Change user password
 const changeUserPassword = async (req, res) => {
-    const { userId } = req.params; // Assuming you're passing the user ID in the route
-    const { newPassword, fruits, email } = req.body;
+    const { username } = req.params;
+    const { email, fruits, newPassword } = req.body;
 
     try {
-        // Normalize input fields to lowercase
-        const lowerCaseEmail = email.toLowerCase();
-        const lowerCaseFruits = fruits.toLowerCase(); 
+        // Normalize and trim inputs
+        const lowerCaseEmail = email.trim().toLowerCase();
+        const lowerCaseFruits = fruits.trim().toLowerCase();
 
-        const user = await User.findById(userId); // Correcting this line to use userId
+        console.log(`Finding user by username: ${username}`);
+        const user = await User.findOne({ username });
+
         if (!user) {
-            return res.status(404).json({ error: "User not found" });
+            return res.status(404).json({ error: 'User not found' });
         }
 
-        // Retrieve and send email and favorite fruit
-        const userDetails = {
-            email: user.email,
-            fruits: user.fruits,
-        };
+        // Log stored user email for comparison
+        console.log(`Stored email: ${user.email}, Provided email: ${lowerCaseEmail}`);
 
-        // Hash and set the new password
-        user.password = await bcrypt.hash(newPassword, 10);
-        
+        // Check if input details are the same as in the database
+        if (user.email.trim().toLowerCase() !== lowerCaseEmail) {
+            return res.status(401).json({ error: 'Wrong email entered' });
+        }
+        if (user.fruits.trim().toLowerCase() !== lowerCaseFruits) {
+            return res.status(401).json({ error: 'Wrong answer to the security question' });
+        }
+
+        // Update password without hashing
+        user.password = newPassword;
         await user.save();
 
-        res.status(200).json({ message: "Password updated successfully", user: userDetails });
+        res.status(200).json({ message: 'Password updated successfully' });
     } catch (error) {
-        res.status(400).json({ error: error.message });
+        console.error('Error during password update:', error);
+        res.status(500).json({ error: 'Internal server error' });
     }
 };
+
+
 
 const forgetPassword = async (req, res) => {
     const { email, fruits } = req.body;
