@@ -5,7 +5,6 @@ const bcrypt = require('bcrypt');
 const registerUser = async (req, res) => {
     const { username, email, password, fruits, gender } = req.body;
 
-    const lowerCaseUsername = username.toLowerCase();
     const lowerCaseEmail = email.toLowerCase();
     const lowerCaseFruits = fruits.toLowerCase(); // Assuming fruits is a single string
 
@@ -17,7 +16,7 @@ const registerUser = async (req, res) => {
         }
 
         // Create a new user
-        const user = await User.create({ username: lowerCaseUsername, email: lowerCaseEmail, password, fruits: lowerCaseFruits, gender });
+        const user = await User.create({ username, email: lowerCaseEmail, password, fruits: lowerCaseFruits, gender });
 
         res.status(201).json({ message: 'User registered successfully' });
     } catch (error) {
@@ -32,7 +31,7 @@ const loginUser = async (req, res) => {
     try {
         console.log(`Login attempt for username: ${username}`);
         
-        const user = await User.findOne({ username: username.toLowerCase() }); // Ensure case-insensitive search
+        const user = await User.findOne({ username }); // Ensure case-insensitive search
 
         console.log('Found user:', user); // This will log null if user is not found
 
