@@ -20,20 +20,16 @@ const userSchema = new mongoose.Schema({
         required: [true, 'Please provide a password'],
         minlength: [6, 'Password must be at least 6 characters'],
     },
-    gender: {  
-        type: String, 
-        required: true
+    fruits: {
+        type: String,
+        required: [true, 'What is your favourite fruit?'],
     },
-    security: {
-        type: String, 
-        required: true
-    },
-    timestamp: {
-        type: String, 
-        required: true, 
-    },
-    
-});
+    gender: {
+        type: String,
+        required: [true, 'Please provide your gender'],
+        enum: ['male', 'female'], // Restrict values to 'male' or 'female'
+    }
+}, { timestamps: true });
 
 // Hash password before saving user
 userSchema.pre('save', async function (next) {
@@ -47,4 +43,13 @@ userSchema.methods.comparePassword = async function (enteredPassword) {
     return await bcrypt.compare(enteredPassword, this.password);
 };
 
-module.exports = mongoose.model('User', userSchema);
+userSchema.methods.compareFruits = function (enteredFruits) {
+    return this.fruits.toLowerCase() === enteredFruits.toLowerCase();
+};
+
+userSchema.methods.compareEmail = function (enteredEmail) {
+    return this.email.toLowerCase() === enteredEmail.toLowerCase();
+};
+
+const User = mongoose.model('User', userSchema);
+module.exports = User;

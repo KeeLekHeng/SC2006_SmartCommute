@@ -1,19 +1,12 @@
 import React, { useState } from 'react';
 import boyAvatar from '../assets/boyAvatar.png';
 import girlAvatar from '../assets/girlAvatar.png';
+import axios from 'axios'; 
 
 const avatars = {
   boy: boyAvatar,
   girl: girlAvatar,
 };
-
-const initialUser = {
-  username: "Thuva",
-  password: "password", 
-  gender: "Male",
-  avatar: avatars.boy,
-};
-// sample data, must recieve the data from BACKEND
 
 
 const DisplayInfoPage = () => {
