@@ -28,8 +28,12 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Please provide your gender'],
         enum: ['male', 'female'], // Restrict values to 'male' or 'female'
-    }
-}, { timestamps: true });
+    }, 
+    timestamp: {
+        type: String, 
+        required: true, 
+    },
+});
 
 // Hash password before saving user
 userSchema.pre('save', async function (next) {
