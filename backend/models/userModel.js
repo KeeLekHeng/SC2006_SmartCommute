@@ -47,5 +47,15 @@ userSchema.methods.comparePassword = async function (enteredPassword) {
     return await bcrypt.compare(enteredPassword, this.password);
 };
 
+userSchema.methods.compareFruits = function (enteredFruits) { 
+    return this.fruits.toLowerCase() === enteredFruits.toLowerCase(); 
+}; 
+ 
+userSchema.methods.compareEmail = function (enteredEmail) { 
+    return this.email.toLowerCase() === enteredEmail.toLowerCase();
+};
+
 const User = mongoose.model('User', userSchema);
 module.exports = User;
+
+
