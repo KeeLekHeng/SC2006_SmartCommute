@@ -9,7 +9,7 @@ exports.addReview = async (req, res) => {
       username,
       gender,
       review,
-      upvotes: 0, // Initialize with 0 upvotes
+      upvotes: 0, 
     });
 
     await newReview.save();
@@ -31,8 +31,12 @@ exports.getReviews = async (req, res) => {
 
 // Update upvotes by username
 exports.updateUpvotes = async (req, res) => {
-  const { username, review } = req.body; // Expecting `username` and `review` in the request body
+  const { username, review } = req.body; 
   const { action } = req.body; // `action` should be 'increment' or 'decrement'
+
+  if (!username || !review) {
+    return res.status(400).json({ message: 'Username and review content are required' });
+  }
 
   if (!action || (action !== 'increment' && action !== 'decrement')) {
     return res.status(400).json({ message: 'Invalid action. Use "increment" or "decrement"' });
@@ -40,7 +44,7 @@ exports.updateUpvotes = async (req, res) => {
 
   try {
     // Find the review using both username and review content
-    const reviewToUpdate = await Review.findOne({ username, review: review.trim() });
+    const reviewToUpdate = await Review.findOne({ username, review: review });
     if (!reviewToUpdate) {
       return res.status(404).json({ message: 'Review not found' });
     }

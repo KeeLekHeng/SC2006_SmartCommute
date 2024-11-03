@@ -23,7 +23,7 @@ const Review = ({ review, onToggleUpvote }) => {
       <div className="flex justify-between items-center mt-2">
         <small>{new Date(review.date).toLocaleString()}</small>
         <button
-          onClick={() => onToggleUpvote(review.username)}
+          onClick={() => onToggleUpvote(review)}
           className={`p-2 rounded ${review.hasUpvoted ? "bg-green-500 text-white" : "bg-gray-100 text-black"} absolute right-2 top-1/2 transform -translate-y-1/2`}
         >
           Upvote ({review.upvotes})
@@ -34,7 +34,7 @@ const Review = ({ review, onToggleUpvote }) => {
 };
 
 const ReviewPage = () => {
-  const { user } = useContext(UserContext); // Assuming UserContext holds user data
+  const { user: username, gender } = useContext(UserContext);
   const [reviews, setReviews] = useState([]);
   const [newReview, setNewReview] = useState('');
   const [filter, setFilter] = useState('mostRecent');
@@ -45,7 +45,11 @@ const ReviewPage = () => {
     const fetchReviews = async () => {
       try {
         const response = await axios.get('http://localhost:4000/review/get');
-        setReviews(response.data);
+        const updatedReviews = response.data.map(review => ({
+          ...review,
+          hasUpvoted: false, // Add initial upvote state for each review
+        }));
+        setReviews(updatedReviews);
       } catch (error) {
         console.error('Error fetching reviews:', error);
       }
@@ -54,26 +58,39 @@ const ReviewPage = () => {
   }, []);
 
   const handleSubmitReview = async () => {
-    if (newReview.trim()) {
+    if (newReview.trim() && username && gender) {
       try {
         const response = await axios.post('http://localhost:4000/review/add', {
           review: newReview,
-          username: user.username,
-          gender: user.gender,
+          username: username,
+          gender: gender,
         });
-        setReviews([...reviews, response.data]);
+        setReviews([...reviews, { ...response.data, hasUpvoted: false }]);
         setNewReview('');
       } catch (error) {
         console.error('Error submitting review:', error);
       }
+    } else {
+      console.error('User data is not available or review is empty.');
     }
   };
 
-  const handleToggleUpvote = async (username) => {
+  const handleToggleUpvote = async (review) => {
     try {
-      const response = await axios.put(`http://localhost:4000/review/${username}/upvote`);
+      const action = review.hasUpvoted ? 'decrement' : 'increment';
+      const response = await axios.put(`http://localhost:4000/review/upvote`, {
+        action,
+        username: review.username,
+        review: review.review,
+      });
+
       const updatedReview = response.data;
-      setReviews(reviews.map(review => (review.username === username ? updatedReview : review)));
+
+      setReviews(reviews.map(r => 
+        (r.username === review.username && r.review === review.review
+          ? { ...updatedReview, hasUpvoted: !review.hasUpvoted } // Toggle hasUpvoted state
+          : r)
+      ));
     } catch (error) {
       console.error('Error toggling upvote:', error);
     }
@@ -133,7 +150,7 @@ const ReviewPage = () => {
           <h2 className="font-bold">Reviews</h2>
           {currentReviews.length > 0 ? (
             currentReviews.map((review) => (
-              <Review key={review._id} review={review} onToggleUpvote={handleToggleUpvote} />
+              <Review key={`${review.username}-${review.review}`} review={review} onToggleUpvote={handleToggleUpvote} />
             ))
           ) : (
             <p>No reviews yet. Be the first to leave one!</p>

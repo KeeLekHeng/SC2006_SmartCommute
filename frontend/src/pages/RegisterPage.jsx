@@ -23,7 +23,6 @@ const RegisterPage = () => {
   };
 
   const handleRegisterClick = async () => {
-    // Get the current time in Singapore
     const sgTime = new Date().toLocaleString('en-SG', { timeZone: 'Asia/Singapore' });
 
     try {
@@ -33,7 +32,7 @@ const RegisterPage = () => {
         password,
         fruits,
         gender,
-        timestamp: sgTime, // Send the timestamp to the backend
+        timestamp: sgTime, 
       });
 
       if (response.status === 201) {

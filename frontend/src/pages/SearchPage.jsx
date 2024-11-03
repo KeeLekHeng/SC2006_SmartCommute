@@ -179,10 +179,9 @@ const handleDestinationClear = () => {
   const handleUseCurrentLocation = async () => {
     if (userLocation) {
       try {
-        // Reverse geocode the coordinates to get the actual address
         const response = await axios.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${userLocation.lat},${userLocation.lng}&key=${API_KEY}`);
         
-        console.log('Reverse Geocode Response:', response.data); // Log the response to inspect
+        console.log('Reverse Geocode Response:', response.data); 
 
         if (response.data && response.data.results.length > 0) {
           const address = response.data.results[0].formatted_address;
