@@ -16,7 +16,7 @@ const SettingsPage = () => {
 
     const handleLogout = () => {
         logout(); // Call the logout function to clear user data
-        navigate('/login');
+        navigate('/');
     };
 
     return (

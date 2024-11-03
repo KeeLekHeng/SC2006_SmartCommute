@@ -27,13 +27,13 @@ const userSchema = new mongoose.Schema({
     gender: {
         type: String,
         required: [true, 'Please provide your gender'],
-        enum: ['male', 'female'], // Restrict values to 'male' or 'female'
-    }, 
-    timestamp: {
-        type: String, 
-        required: true, 
+        enum: {
+            values: ['male', 'female'],
+            message: 'Gender must be either male or female',
+        },
     },
-});
+    favorites: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Favorite' }], // Changed to ObjectId
+}, { timestamps: true });
 
 // Hash password before saving user
 userSchema.pre('save', async function (next) {
@@ -45,14 +45,6 @@ userSchema.pre('save', async function (next) {
 // Password comparison method
 userSchema.methods.comparePassword = async function (enteredPassword) {
     return await bcrypt.compare(enteredPassword, this.password);
-};
-
-userSchema.methods.compareFruits = function (enteredFruits) {
-    return this.fruits.toLowerCase() === enteredFruits.toLowerCase();
-};
-
-userSchema.methods.compareEmail = function (enteredEmail) {
-    return this.email.toLowerCase() === enteredEmail.toLowerCase();
 };
 
 const User = mongoose.model('User', userSchema);

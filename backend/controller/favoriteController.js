@@ -18,18 +18,25 @@ const getFavorites = async (req, res) => {
   }
 };
 
-// Add a new favorite for a user based on username
 const addFavorite = async (req, res) => {
+  console.log("POST /favorites request received with data:", req.body); // Log to confirm request
   const { username, name, location } = req.body;
+  
+  // Log incoming data for debugging
+  console.log("addFavorite request body:", req.body);
 
   try {
     // Find the user by username
     const user = await User.findOne({ username });
     if (!user) {
+      console.log("User not found:", username);
       return res.status(404).json({ message: 'User not found' });
     }
 
-    // Create a new favorite using the user's _id as userId
+    // Log user information to confirm correct user data
+    console.log("User found:", user);
+
+    // Create a new favorite with user's ObjectId as userId
     const favorite = new Favorite({
       userId: user._id,
       name,
@@ -37,11 +44,15 @@ const addFavorite = async (req, res) => {
     });
 
     const newFavorite = await favorite.save();
+    console.log("Favorite added successfully:", newFavorite);
+
     res.status(201).json(newFavorite);
   } catch (error) {
+    console.error("Error in addFavorite:", error.message);
     res.status(400).json({ message: error.message });
   }
 };
+
 
 // Delete a favorite by ID
 const deleteFavorite = async (req, res) => {

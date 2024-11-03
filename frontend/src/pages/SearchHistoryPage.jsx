@@ -38,10 +38,31 @@ const SearchHistoryPage = () => {
     }
   }, [username]);
 
+  const handleClearHistory = async () => { 
+    try { 
+      const response = await axios.delete(`http://localhost:4000/search/clearhistory/${username}`);
+      if (response.status === 200) {
+        setSearchHistory([]); 
+      }
+    } 
+    catch (error) {
+      console.error('Error clearing search history', error); 
+    }
+  };
+
   return (
     <div className="bg-teal-500 flex justify-center items-center h-screen p-4">
       <div className="bg-white p-6 rounded-lg w-full max-w-4xl shadow-lg overflow-y-auto">
         <h1 className="font-bold text-center mb-6 text-lg text-gray-700">Search History</h1>
+        {/*clear history*/} 
+        <div className='mb-4 text-right'>
+          <button 
+          onClick={handleClearHistory}
+          className='bg-red-500 text-white p-2 rounded hover:bg-red-600 transition duration-300 '
+          >
+            Clear History
+          </button>
+          </div>
 
         {/* Table */}
         <div className="overflow-x-auto">
@@ -54,9 +75,6 @@ const SearchHistoryPage = () => {
                 <th className="py-3 px-4 border-b text-left font-semibold">Date</th>
                 <th className="py-3 px-4 border-b text-left font-semibold">Starting Location</th>
                 <th className="py-3 px-4 border-b text-left font-semibold">Destination</th>
-                <th className="py-3 px-4 border-b text-left font-semibold">Mode of Transport</th>
-                <th className="py-3 px-4 border-b text-left font-semibold">Duration</th>
-                <th className="py-3 px-4 border-b text-left font-semibold">Cost</th>
               </tr>
             </thead>
             <tbody>
@@ -69,9 +87,6 @@ const SearchHistoryPage = () => {
                   </td>
                   <td className="py-3 px-4 border-b">{entry.start_location}</td>
                   <td className="py-3 px-4 border-b">{entry.destination}</td>
-                  <td className="py-3 px-4 border-b">{entry.mode_of_transport}</td>
-                  <td className="py-3 px-4 border-b">{entry.duration}</td>
-                  <td className="py-3 px-4 border-b">{entry.cost}</td>
                 </tr>
               )) : (
                 <tr>

@@ -15,6 +15,7 @@ import SearchHistoryPage from './pages/SearchHistoryPage'
 import UpdatePassword from './pages/UpdatePassword';
 import ForgetPassword from './pages/ForgetPassword';
 import Comparisons from "./pages/Comparisons";
+import FavouritesPage from "./pages/FavouritesPage";
 
 const App = () => {
 
@@ -35,6 +36,7 @@ const App = () => {
         <Route path='/update-password' element={<UpdatePassword/>} />
         <Route path='/comparison' element={<Comparisons/>} />
         <Route path='/forget-password' element={<ForgetPassword/>} />
+        <Route path ='/favourites' element={<FavouritesPage/>} />
       </Routes>
   </GpsProvider>
   </UserProvider>
