@@ -26,9 +26,6 @@ const LoginPage = () => {
   };
 
   const handleLoginClick = async () => {
-    console.log('Username:', usernameInput);
-    console.log('Password:', password);
-
     try {
       const response = await axios.post('http://localhost:4000/authRoutes/login', {
         username: usernameInput,
@@ -74,9 +71,27 @@ const LoginPage = () => {
         {alert.show && <Alert type={alert.type} message={alert.message} onClose={closeAlert} />}
       </div>
 
-      <div className="w-4/6 max-w-md bg-white shadow-lg rounded-lg p-8 mx-4 flex flex-col items-center">
-        <header className="mb-6 text-center">
-          <img src={Logo} alt="logo" className="mb-4 h-56" />
+      <div className="w-4/6 max-w-md bg-white shadow-lg rounded-lg p-8 mx-4 flex flex-col items-center relative">
+        
+        {/* Back Button with Larger Clickable Area */}
+        <button 
+          onClick={() => navigate(-1)}
+          className="absolute top-4 left-4 flex items-center px-6 py-3 bg-gray-200 text-gray-700 rounded-full font-semibold hover:bg-gray-300 shadow transition duration-200"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5 mr-2"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+          
+        </button>
+
+        <header className="mb-6 text-center relative w-full flex flex-col items-center">
+          <img src={Logo} alt="logo" className="mb-4 h-48" />
           <h2 className="text-teal-700 text-3xl font-bold">SmartCommute</h2>
         </header>
 

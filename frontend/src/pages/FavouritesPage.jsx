@@ -1,12 +1,15 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useContext } from 'react';
 import axios from 'axios';
 import { useJsApiLoader } from '@react-google-maps/api';
-import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+import settings from '../assets/setttings.png';
+import favourites from '../assets/fav.png';
+import home from '../assets/home.png';
+import Logo from '../assets/logo1.png';
 
 const FavoritesPage = () => {
-  const { user } = useContext(UserContext);  // Retrieve user instead of setUsername
+  const { user } = useContext(UserContext);
   const navigate = useNavigate();
 
   const [favorites, setFavorites] = useState([]);
@@ -26,7 +29,7 @@ const FavoritesPage = () => {
   const { isLoaded } = useJsApiLoader(loaderOptions);
 
   useEffect(() => {
-    if (user) {  // Ensure user is defined before fetching favorites
+    if (user) {
       fetchFavorites();
     }
   }, [user]);
@@ -77,7 +80,7 @@ const FavoritesPage = () => {
   
     try {
       const response = await axios.post('http://localhost:4000/favorites', {
-        username: user,  // Using user here to represent the username
+        username: user,
         name: locationName,
         location: selectedLocation.formatted_address,
       });
@@ -115,26 +118,43 @@ const FavoritesPage = () => {
   };
 
   return (
-    <div className="flex flex-col items-center h-screen bg-cyan-100 overflow-hidden p-8">
-      <div className="w-full max-w-md bg-white shadow-xl rounded-lg p-8 flex flex-col items-center">
+    <div className="flex flex-col h-screen" style={{ backgroundColor: '#E8F0FA' }}> {/* Light Blue Gray Background */}
+      
+      {/* Header */}
+      <nav className="fixed h-24 top-0 left-0 right-0 bg-[#4169E1] text-white shadow-md z-40 transition-all duration-300"> {/* Royal Blue Header */}
+        <div className="flex items-center justify-between h-full px-4">
+          <div className="flex items-center">
+            <img src={Logo} alt="Logo" className="w-18 h-14 mr-6" />
+            <span className="text-2xl font-bold">SmartCommute</span>
+          </div>
+
+          <div className="flex space-x-44">
+            <div className="flex flex-col items-center">
+              <img src={home} alt="Home" className="w-14 h-14" />
+              <Link to="/main" className="hover:underline text-lg font-semibold transition duration-300 pb-2 text-white">
+                Home
+              </Link>
+            </div>
+            <div className="flex flex-col items-center">
+              <img src={favourites} alt="Favourites" className="w-12 h-12 mb-2" />
+              <Link to="/favourites" className="hover:underline text-lg font-semibold transition duration-300 pb-2 text-white">
+                Favourites
+              </Link>
+            </div>
+            <div className="flex flex-col items-center">
+              <img src={settings} alt="Settings" className="w-14 h-14" />
+              <Link to="/settings" className="hover:underline text-lg font-semibold transition duration-300 pb-2 text-white">
+                Settings
+              </Link>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      <div className="pt-28 flex-1 overflow-y-auto px-4 pb-8">
         <header className="mb-6 text-center">
           <h2 className="text-teal-700 text-3xl font-bold">Favorites</h2>
         </header>
-
-        {/* Back Button */}
-        <button 
-          onClick={() => navigate('/main')} 
-          className="self-start mb-4 bg-gray-200 text-gray-700 px-4 py-2 rounded-full font-semibold hover:bg-gray-300 hover:shadow-md transition flex items-center"
-        >
-          <span className="mr-2">←</span> Back to Main Page
-        </button>
-
-        {/* Display Alert Message */}
-        {alertMessage && (
-          <div className={`w-full mb-4 p-3 text-center ${alertType === 'error' ? 'bg-red-500' : 'bg-green-500'} text-white rounded`}>
-            {alertMessage}
-          </div>
-        )}
 
         {/* Display Existing Favorites */}
         {favorites.length > 0 ? (
@@ -161,7 +181,7 @@ const FavoritesPage = () => {
           <p className="text-gray-600">No saved locations.</p>
         )}
 
-        {/* Search for a New Location */}
+        {/* Search and Add Favorite Section */}
         <input
           type="text"
           placeholder="Search for a location"
@@ -170,13 +190,12 @@ const FavoritesPage = () => {
           className="w-full mb-4 p-3 border border-gray-300 rounded-lg shadow-sm"
         />
         <button
-          className="w-full bg-teal-500 text-white py-3 px-4 rounded-lg font-semibold hover:bg-teal-600 transition shadow-md"
-          onClick={handleSearch}
+        className="w-full bg-[#4169E1] text-white py-3 px-4 rounded-full font-semibold hover:bg-[#3a5eb4] transition shadow-lg"
+        onClick={handleSearch}
         >
-          Search
+        Search
         </button>
 
-        {/* Display Search Results */}
         {searchResults.length > 0 && (
           <div className="w-full mb-4 space-y-2">
             {searchResults.map((result, index) => (
@@ -192,7 +211,6 @@ const FavoritesPage = () => {
           </div>
         )}
 
-        {/* Input for Naming Selected Location */}
         {selectedLocation && (
           <div className="w-full mt-4">
             <input
@@ -208,9 +226,19 @@ const FavoritesPage = () => {
           </div>
         )}
       </div>
+
+      {/* Footer */}
+      <footer className="bg-[#4169E1] text-center text-lg text-white py-2 fixed bottom-0 w-full z-30"> {/* Royal Blue Footer */}
+        <Link to="/review" className="hover:underline mb-1 text-white">
+          <i className="material-icons text-yellow-500 mr-4">star</i>
+          Leave us a review 
+          <i className="material-icons text-yellow-500 ml-4">star</i>
+        </Link>
+        <span className="block mt-2 text-white"> www.smartcommutesg.com</span>
+      </footer>
+
     </div>
   );
 };
 
 export default FavoritesPage;
-

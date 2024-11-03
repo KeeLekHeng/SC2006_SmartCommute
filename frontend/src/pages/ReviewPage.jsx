@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import axios from 'axios';
 import { UserContext } from '../context/UserContext';
 import boyAvatar from "../assets/boyAvatar.png";
@@ -10,7 +11,6 @@ const avatars = {
 };
 
 const Review = ({ review, onToggleUpvote }) => {
-  // Determine the avatar based on the gender from the review
   const avatar = review.gender === 'female' ? avatars.female : avatars.male;
 
   return (
@@ -34,6 +34,7 @@ const Review = ({ review, onToggleUpvote }) => {
 };
 
 const ReviewPage = () => {
+  const navigate = useNavigate(); // Initialize navigate function
   const { user: username, gender } = useContext(UserContext);
   const [reviews, setReviews] = useState([]);
   const [newReview, setNewReview] = useState('');
@@ -47,7 +48,7 @@ const ReviewPage = () => {
         const response = await axios.get('http://localhost:4000/review/get');
         const updatedReviews = response.data.map(review => ({
           ...review,
-          hasUpvoted: false, // Add initial upvote state for each review
+          hasUpvoted: false,
         }));
         setReviews(updatedReviews);
       } catch (error) {
@@ -88,7 +89,7 @@ const ReviewPage = () => {
 
       setReviews(reviews.map(r => 
         (r.username === review.username && r.review === review.review
-          ? { ...updatedReview, hasUpvoted: !review.hasUpvoted } // Toggle hasUpvoted state
+          ? { ...updatedReview, hasUpvoted: !review.hasUpvoted }
           : r)
       ));
     } catch (error) {
@@ -122,7 +123,25 @@ const ReviewPage = () => {
 
   return (
     <div className="bg-teal-500 flex justify-center items-center h-screen">
-      <div className="bg-white p-5 rounded-lg w-full max-w-lg h-full max-h-[90vh] shadow-lg overflow-y-auto">
+      <div className="bg-white p-5 rounded-lg w-full max-w-lg h-full max-h-[90vh] shadow-lg overflow-y-auto relative">
+        
+        {/* Styled Back Button with SVG Arrow */}
+        <button
+          onClick={() => navigate(-1)}
+          className="absolute top-4 left-4 flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded-full shadow hover:bg-gray-300 transition duration-200"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-4 w-4 mr-2" // Adjust size here
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+          
+        </button>
+
         <h1 className="font-bold text-center mb-4">Leave a Review</h1>
         <div className="mb-4">
           <textarea

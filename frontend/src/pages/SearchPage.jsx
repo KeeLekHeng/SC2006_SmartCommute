@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect, useContext } from 'react';
 import Alert from '../components/Alert';
 import { UserContext } from '../context/UserContext';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { GoogleMap, useJsApiLoader, StandaloneSearchBox, Marker} from "@react-google-maps/api";
+import { GoogleMap, useJsApiLoader, StandaloneSearchBox, Marker } from "@react-google-maps/api";
 import axios from 'axios'; 
 import moment from 'moment-timezone';
 
@@ -10,7 +10,7 @@ const API_KEY = process.env.REACT_APP_GMAPSAPI;
 const libraries = ['places'];
 
 const SearchPage = () => {
-  const {user: username} = useContext(UserContext);
+  const { user: username } = useContext(UserContext);
   const [map, setMap] = useState(null);
   const [markers, setMarkers] = useState([]);
   const [center, setCenter] = useState({ lat: 1.3521, lng: 103.8198 });
@@ -18,11 +18,12 @@ const SearchPage = () => {
   const [destination, setDestination] = useState('');
   const [alert, setAlert] = useState({ show: false, message: '', type: '' });
   const [userLocation, setUserLocation] = useState(null);
+  const [favorites, setFavorites] = useState([]);
+  const [showFavoritesDropdown, setShowFavoritesDropdown] = useState({ start: false, destination: false });
   
-
-  const [line, setLine] = useState(null);
-  const [destinationMarkerPosition, setDestinationMarkerPosition] = useState(null);
+  const [line, setLine] = useState(null); 
   const [startLocationMarkerPosition, setStartLocationMarkerPosition] = useState(null);
+  const [destinationMarkerPosition, setDestinationMarkerPosition] = useState(null);
 
   const startRef = useRef(null);
   const destinationRef = useRef(null);
@@ -34,6 +35,22 @@ const SearchPage = () => {
     googleMapsApiKey: API_KEY,
     libraries: libraries,
   });
+
+  const fetchFavorites = async () => {
+    try {
+      const response = await axios.get(`http://localhost:4000/favorites/${username}`);
+      setFavorites(response.data);
+    } catch (error) {
+      console.error("Error fetching favorites:", error);
+      setAlert({ show: true, message: "Failed to load favorites.", type: "error" });
+    }
+  };
+
+  useEffect(() => {
+    if (username) {
+      fetchFavorites();
+    }
+  }, [username]);
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -53,23 +70,22 @@ const SearchPage = () => {
   }, []);
 
   const drawLineBetweenMarkers = (start, destination) => {
-    // Clear any existing line before drawing a new one
     if (line) {
       line.setMap(null);
       setLine(null);
-  }
+    }
 
     const path = [
-        new window.google.maps.LatLng(start.lat, start.lng),
-        new window.google.maps.LatLng(destination.lat, destination.lng),
+      new window.google.maps.LatLng(start.lat, start.lng),
+      new window.google.maps.LatLng(destination.lat, destination.lng),
     ];
 
     const newLine = new window.google.maps.Polyline({
-        path: path,
-        geodesic: true,
-        strokeColor: '#FF0000',
-        strokeOpacity: 1.0,
-        strokeWeight: 2,
+      path: path,
+      geodesic: true,
+      strokeColor: '#FF0000',
+      strokeOpacity: 1.0,
+      strokeWeight: 2,
     });
 
     newLine.setMap(map);
@@ -87,9 +103,6 @@ const SearchPage = () => {
       return; 
     }
 
-    console.log("Start location:", startLocation);
-    console.log("Destination:", destination);
-
     const sgTime = moment().tz('Asia/Singapore').format('YYYY-MM-DD HH:mm:ss');
     try { 
       const response = await axios.post('http://localhost:4000/search/', {
@@ -105,74 +118,66 @@ const SearchPage = () => {
     }
   }
 
-  const handleStartLocationClear = () => {
-    setStartLocation('');
-    setStartLocationMarkerPosition(null);
-    setMarkers((prevMarkers) => prevMarkers.filter(marker => marker.title !== 'Starting Location'));
-
-    // Remove the line if it exists
-    if (line) {
-        line.setMap(null);
-        setLine(null);
+  const handleClear = (field) => {
+    if (field === 'start') {
+      setStartLocation('');
+      setStartLocationMarkerPosition(null);
+      setMarkers((prevMarkers) => prevMarkers.filter(marker => marker.title !== 'Starting Location'));
+    } else if (field === 'destination') {
+      setDestination('');
+      setDestinationMarkerPosition(null);
+      setMarkers((prevMarkers) => prevMarkers.filter(marker => marker.title !== 'Destination'));
     }
-};
-
-const handleDestinationClear = () => {
-    setDestination('');
-    setDestinationMarkerPosition(null);
-    setMarkers((prevMarkers) => prevMarkers.filter(marker => marker.title !== 'Destination'));
 
     if (line) {
-        line.setMap(null);
-        setLine(null);
+      line.setMap(null);
+      setLine(null);
     }
-};
+  };
 
   const handleOnPlacesChanged = (inputType, ref) => {
     const places = ref.getPlaces();
     if (places && places.length > 0) {
-        const place = places[0];
-        if (place.geometry && place.geometry.location) {
-            const location = place.geometry.location;
+      const place = places[0];
+      if (place.geometry && place.geometry.location) {
+        const location = place.geometry.location;
 
-            const newMarker = {
-                position: { lat: location.lat(), lng: location.lng() },
-                title: inputType === 'start' ? 'Starting Location' : 'Destination',
-            };
+        const newMarker = {
+          position: { lat: location.lat(), lng: location.lng() },
+          title: inputType === 'start' ? 'Starting Location' : 'Destination',
+        };
 
-            if (inputType === 'start') {
-                setStartLocation(place.formatted_address);
-                setStartLocationMarkerPosition(newMarker.position);
+        if (inputType === 'start') {
+          setStartLocation(place.formatted_address);
+          setStartLocationMarkerPosition(newMarker.position);
 
-                setMarkers((prevMarkers) => prevMarkers
-                    .filter(marker => marker.title !== 'Starting Location')
-                    .concat(newMarker));
-                
-                if (map) {
-                    map.setZoom(15);  // Zoom in on starting location
-                    map.panTo(newMarker.position);  // Center map on starting location
-                }
+          setMarkers((prevMarkers) => prevMarkers
+            .filter(marker => marker.title !== 'Starting Location')
+            .concat(newMarker));
+          
+          if (map) {
+            map.setZoom(15);
+            map.panTo(newMarker.position);
+          }
 
-                if (line) line.setMap(null);
-            } else {
-                setDestination(place.formatted_address);
-                setDestinationMarkerPosition(newMarker.position);
+          if (line) line.setMap(null);
+        } else {
+          setDestination(place.formatted_address);
+          setDestinationMarkerPosition(newMarker.position);
 
-                setMarkers((prevMarkers) => prevMarkers
-                    .filter(marker => marker.title !== 'Destination')
-                    .concat(newMarker));
-            }
-
-            if (map) {
-                if (inputType === 'start' && destinationMarkerPosition) {
-                    drawLineBetweenMarkers(newMarker.position, destinationMarkerPosition);
-                } else if (inputType === 'destination' && startLocationMarkerPosition) {
-                    drawLineBetweenMarkers(startLocationMarkerPosition, newMarker.position);
-                }
-            }
+          setMarkers((prevMarkers) => prevMarkers
+            .filter(marker => marker.title !== 'Destination')
+            .concat(newMarker));
         }
-    } else {
-        setAlert({ show: true, message: 'Invalid location selected.', type: 'error' });
+
+        if (map) {
+          if (inputType === 'start' && destinationMarkerPosition) {
+            drawLineBetweenMarkers(newMarker.position, destinationMarkerPosition);
+          } else if (inputType === 'destination' && startLocationMarkerPosition) {
+            drawLineBetweenMarkers(startLocationMarkerPosition, newMarker.position);
+          }
+        }
+      }
     }
   };
 
@@ -181,20 +186,17 @@ const handleDestinationClear = () => {
       try {
         const response = await axios.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${userLocation.lat},${userLocation.lng}&key=${API_KEY}`);
         
-        console.log('Reverse Geocode Response:', response.data); 
-
         if (response.data && response.data.results.length > 0) {
           const address = response.data.results[0].formatted_address;
-          setStartLocation(address); // Update the input field with the fetched address
+          setStartLocation(address);
         } else {
           setStartLocation('Unable to determine address');
         }
-  
-        // Ensure the marker is set for the current location
+
         setStartLocationMarkerPosition(userLocation);
         setMarkers((prevMarkers) => prevMarkers.filter(marker => marker.title !== 'Starting Location')
           .concat({ position: userLocation, title: 'Starting Location' }));
-  
+
         if (destinationMarkerPosition) {
           drawLineBetweenMarkers(userLocation, destinationMarkerPosition);
         }
@@ -204,21 +206,59 @@ const handleDestinationClear = () => {
       }
     }
   };
-  
-  
+
+  const handleFavoriteSelect = (favorite, inputType) => {
+    if (inputType === 'start') {
+      setStartLocation(favorite.location); 
+    } else {
+      setDestination(favorite.location);
+    }
+    setShowFavoritesDropdown((prev) => ({ ...prev, [inputType]: false }));
+    
+    if (favorite.lat && favorite.lng) {
+      const position = { lat: favorite.lat, lng: favorite.lng };
+      setMarkers((prevMarkers) => prevMarkers.filter(marker => marker.title !== (inputType === 'start' ? 'Starting Location' : 'Destination'))
+        .concat({ position, title: inputType === 'start' ? 'Starting Location' : 'Destination' }));
+      if (map) {
+        map.panTo(position);
+      }
+    }
+  };
+
+  const handleFocus = (inputType) => {
+    if (inputType === 'start' && startLocation === '') {
+      setShowFavoritesDropdown((prev) => ({ ...prev, start: true }));
+    } else if (inputType === 'destination' && destination === '') {
+      setShowFavoritesDropdown((prev) => ({ ...prev, destination: true }));
+    }
+  };
+
+  const handleChange = (e, inputType) => {
+    if (inputType === 'start') {
+      setStartLocation(e.target.value);
+      setShowFavoritesDropdown((prev) => ({ ...prev, start: e.target.value === '' }));
+    } else if (inputType === 'destination') {
+      setDestination(e.target.value);
+      setShowFavoritesDropdown((prev) => ({ ...prev, destination: e.target.value === '' }));
+    }
+  };
+
+  const handleBlur = (inputType) => {
+    setTimeout(() => setShowFavoritesDropdown((prev) => ({ ...prev, [inputType]: false })), 100);
+  };
 
   return (
-    <div className="flex w-full h-[calc(100vh-8rem)] overflow-hidden pt-4">       
+    <div className="flex w-full h-[calc(100vh-8rem)] overflow-hidden pt-4">
       {alert.show && (
         <div className="absolute top-0 left-0 right-0 p-4 z-40">
           <Alert type={alert.type} message={alert.message} onClose={() => setAlert({ ...alert, show: false })} />
         </div>
       )}
-
-      <div className="w-3/5 h-full">
+  
+      <div className="w-3/4 h-full">
         {isLoaded ? (
           <GoogleMap
-            mapContainerStyle={{ width: '100%', height: '600px' }}
+            mapContainerStyle={{ width: '100%', height: 'calc(100vh - 8rem)' }}
             zoom={12}
             center={center}
             onLoad={(mapInstance) => setMap(mapInstance)}
@@ -231,17 +271,13 @@ const handleDestinationClear = () => {
           <div>Loading....</div>
         )}
       </div>
-
-      <div className="w-2/5 h-full flex items-center justify-center p-4">
-        <div className="w-3/4 max-w-md max-h-full overflow-hidden flex flex-col justify-center">
-          <div className="border border-gray-300 bg-gray-100 p-4 rounded-md mb-4 text-center">
-            <p className="text-gray-600">Enter your starting and ending location</p>
-          </div>
-
-          <button onClick={handleUseCurrentLocation} className="mb-4 bg-green-300 p-2 rounded-md">
+  
+      <div className="w-1/4 h-full flex items-center justify-center p-4">
+        <div className="w-3/4 max-w-md max-h-full overflow-visible flex flex-col justify-start relative">
+          <button onClick={handleUseCurrentLocation} className="mb-4 bg-green-300 p-2 rounded-md font-semibold hover:bg-[#4CAF50] transition shadow-lg">
             Use Current Location
           </button>
-
+  
           <div className="w-full mb-4 relative">
             <label htmlFor="startLocation" className="block text-gray-700 text-lg font-medium mb-2">
               Starting Location
@@ -257,18 +293,37 @@ const handleDestinationClear = () => {
                   placeholder="Enter starting location"
                   className="w-full p-3 border border-gray-300 rounded-lg shadow-sm"
                   value={startLocation}
-                  onChange={(e) => setStartLocation(e.target.value)}
+                  onChange={(e) => handleChange(e, 'start')}
+                  onFocus={() => handleFocus('start')}
+                  onBlur={() => handleBlur('start')}
                 />
               </StandaloneSearchBox>
             )}
             <button 
-              onClick={handleStartLocationClear} 
+              onClick={() => handleClear('start')} 
               className="absolute right-3 top-1/2 transform bg-gray-300 text-sm text-gray-700 p-1 rounded-full hover:bg-gray-400"
             >
               Clear
             </button>
+            {showFavoritesDropdown.start && (
+              <div className="absolute top-full left-0 w-full bg-white border border-gray-300 rounded-lg shadow-lg mt-1 z-50">
+                {favorites.length > 0 ? (
+                  favorites.map((favorite, index) => (
+                    <button
+                      key={index}
+                      className="w-full text-left px-4 py-2 hover:bg-gray-100"
+                      onClick={() => handleFavoriteSelect(favorite, 'start')}
+                    >
+                      {favorite.name}
+                    </button>
+                  ))
+                ) : (
+                  <p className="text-gray-500 p-2">No favorite locations available</p>
+                )}
+              </div>
+            )}
           </div>
-
+  
           <div className="w-full mb-4 relative">
             <label htmlFor="destination" className="block text-gray-700 text-lg font-medium mb-2">
               Destination
@@ -284,25 +339,44 @@ const handleDestinationClear = () => {
                   placeholder="Enter destination"
                   className="w-full p-3 border border-gray-300 rounded-lg shadow-sm"
                   value={destination}
-                  onChange={(e) => setDestination(e.target.value)}
+                  onChange={(e) => handleChange(e, 'destination')}
+                  onFocus={() => handleFocus('destination')}
+                  onBlur={() => handleBlur('destination')}
                 />
               </StandaloneSearchBox>
             )}
             <button 
-              onClick={handleDestinationClear} 
+              onClick={() => handleClear('destination')} 
               className="absolute right-3 top-1/2 transform bg-gray-300 text-sm text-gray-700 p-1 rounded-full hover:bg-gray-400"
             >
               Clear
             </button>
+            {showFavoritesDropdown.destination && (
+              <div className="absolute top-full left-0 w-full bg-white border border-gray-300 rounded-lg shadow-lg mt-1 z-50">
+                {favorites.length > 0 ? (
+                  favorites.map((favorite, index) => (
+                    <button
+                      key={index}
+                      className="w-full text-left px-4 py-2 hover:bg-gray-100"
+                      onClick={() => handleFavoriteSelect(favorite, 'destination')}
+                    >
+                      {favorite.name}
+                    </button>
+                  ))
+                ) : (
+                  <p className="text-gray-500 p-2">No favorite locations available</p>
+                )}
+              </div>
+            )}
           </div>
-
+  
           <button onClick={handleSearch} className="w-full bg-blue-500 text-white p-3 rounded-lg font-medium hover:bg-blue-600 transition duration-200">
             Search
           </button>
         </div>
       </div>
     </div>
-  );
+  ); 
 };
 
 export default SearchPage;
