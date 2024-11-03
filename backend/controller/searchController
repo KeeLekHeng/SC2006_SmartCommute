@@ -111,13 +111,27 @@ const updateFavourite = async (req, res) => {
     res.status(200).json(search);
 };
 
-// Export the functions
+const clearSearchHistory = async (req, res) => {
+    const { username } = req.params;
+    try {
+        const history = await Search.deleteMany({ username });
+        if (history.deletedCount === 0) {
+            return res.status(404).json({ message: "No search history found" });
+        }
+        res.status(200).json({ message: 'Search History cleared' });
+    } catch (error) {
+        console.error('Error Clearing Search History', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+};
+
 module.exports = {
     createFavourites,
     getSearches,
     getSearch,
     deleteFavourite,
-    updateFavourite, 
-    saveSearch, 
+    updateFavourite,
+    saveSearch,
     getUserSearchHistory,
+    clearSearchHistory,
 };

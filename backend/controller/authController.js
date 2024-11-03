@@ -3,7 +3,7 @@ const bcrypt = require('bcrypt');
 
 // Register a new user
 const registerUser = async (req, res) => {
-    const { username, email, password, fruits, gender, timestamp } = req.body;
+    const { username, email, password, fruits, gender } = req.body;
 
     const lowerCaseEmail = email.toLowerCase();
     const lowerCaseFruits = fruits.toLowerCase(); 

@@ -7,7 +7,8 @@ const {
     deleteFavourite,
     updateFavourite, 
     saveSearch, 
-    getUserSearchHistory
+    getUserSearchHistory,
+    clearSearchHistory,
 } = require('../controller/searchController');
 
 const router = express.Router();
@@ -31,5 +32,7 @@ router.patch('/:id', updateFavourite);
 
 //get search history
 router.get('/history/:username', getUserSearchHistory); 
+
+router.delete('/clearhistory/:username', clearSearchHistory);
 
 module.exports = router;
