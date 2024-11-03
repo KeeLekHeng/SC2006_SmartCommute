@@ -12,8 +12,12 @@ const RouteOption = ({ route, startLocation, destination, onHover }) => (
   >
     <div className="flex items-center space-x-2">
       {route.steps.map((step, i) => (
-        <div key={i} className="p-1 rounded-full bg-green-500 text-white">
-          {step === "TRANSIT" ? "🚍" : step === "WALK" ? "🚶‍♂️" : "🚇"}
+        <div key={i} className="p-1 rounded-full bg-green-500 text-white text-xs">
+          {step.travelMode === "TRANSIT" ? (
+            step.isMRT ? `🚇 ${step.transitLine}` : `🚍 ${step.transitLine || '199'}`
+          ) : (
+            step.travelMode === "WALKING" ? "🚶‍♂️" : ""
+          )}
         </div>
       ))}
     </div>
@@ -36,24 +40,32 @@ const ComparisonPage = () => {
 
   const directionsCallback = useCallback((response) => {
     if (response && response.status === "OK" && !directionsFetched) {
-        const processedRoutes = response.routes.slice(0, 6).map((route, index) => { // Get top 6 routes
-            const leg = route.legs[0];
-            console.log("Leg steps for route:", leg.steps); // Log the steps
+      const processedRoutes = response.routes.slice(0, 6).map((route, index) => {
+        const leg = route.legs[0];
+        return {
+          index,
+          duration: leg.duration.value,
+          durationText: leg.duration.text,
+          price: (Math.random() * 5 + 2).toFixed(2),
+          steps: leg.steps.map((step) => {
+            const isTransit = step.travel_mode === "TRANSIT";
             return {
-                index,
-                duration: leg.duration.value,
-                durationText: leg.duration.text,
-                price: (Math.random() * 5 + 2).toFixed(2), // Placeholder for cost
-                steps: leg.steps.map((step) => step.travel_mode),
+              travelMode: step.travel_mode,
+              transitLine: isTransit && step.transit_details ? step.transit_details.line.short_name || "199" : "No line info",
+              instructions: step.html_instructions,
+              duration: step.duration.text,
+              isMRT: isTransit && step.transit_details && step.transit_details.line.vehicle.type === "SUBWAY",  // check if MRT
             };
-        });
-        setRoutes(processedRoutes);
-        setDirectionsResponse(response); // Store the complete directions response
-        setDirectionsFetched(true); // Prevent further calls
+          }),
+        };
+      });
+      setRoutes(processedRoutes);
+      setDirectionsResponse(response);
+      setDirectionsFetched(true);
     }
-}, [directionsFetched]);
+  }, [directionsFetched]);
+
   useEffect(() => {
-    // Reset directionsFetched when startLocation or destination changes
     setDirectionsFetched(false);
   }, [startLocation, destination]);
 
@@ -100,7 +112,7 @@ const ComparisonPage = () => {
                 origin: startLocation,
                 destination: destination,
                 travelMode: "TRANSIT",
-                provideRouteAlternatives: true, // Request multiple routes
+                provideRouteAlternatives: true,
               }}
               callback={directionsCallback}
             />
