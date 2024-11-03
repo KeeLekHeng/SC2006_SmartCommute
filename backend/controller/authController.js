@@ -1,34 +1,82 @@
 const User = require('../models/userModel');
 const bcrypt = require('bcrypt');
+const validator = require('validator');
 
 // Register a new user
 const registerUser = async (req, res) => {
     const { username, email, password, fruits, gender } = req.body;
 
     const lowerCaseEmail = email.toLowerCase();
-    const lowerCaseFruits = fruits.toLowerCase(); 
+    const lowerCaseFruits = fruits.toLowerCase();
 
     try {
-        // Check if user already exists
-        const existingUser = await User.findOne({ username });
-        if (existingUser) {
-            return res.status(400).json({ error: 'User already exists' });
+        // Validate email format
+        if (!validator.isEmail(lowerCaseEmail)) {
+            return res.status(400).json({ error: 'Invalid Email: Please enter a valid email address.' });
         }
 
-        const user = await User.create({ 
-            username, 
-            email: lowerCaseEmail, 
-            password, 
-            fruits: lowerCaseFruits, 
-            gender, 
-            timestamp
+        // Check if email is already registered
+        const emailExists = await User.findOne({ email: lowerCaseEmail });
+        if (emailExists) {
+            return res.status(400).json({ error: 'Email already in use: Please use a different email address.' });
+        }
+
+        // Check if username is already taken
+        const existingUser = await User.findOne({ username });
+        if (existingUser) {
+            return res.status(400).json({ error: 'Username already taken: Please choose a different username.' });
+        }
+
+        // Validate password requirements
+        if (password.length < 8 || password.length > 18) {
+            return res.status(400).json({ error: 'Invalid Password: Password must be between 8-18 characters long.' });
+        }
+
+        if (!/[A-Za-z]/.test(password)) {
+            return res.status(400).json({ error: 'Invalid Password: Password must contain at least one letter.' });
+        }
+
+        if (!/\d/.test(password)) {
+            return res.status(400).json({ error: 'Invalid Password: Password must contain at least one number.' });
+        }
+
+        if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+            return res.status(400).json({ error: 'Invalid Password: Password must contain at least one special character.' });
+        }
+
+        // Create the new user
+        const user = await User.create({
+            username,
+            email: lowerCaseEmail,
+            password,
+            fruits: lowerCaseFruits,
+            gender
         });
 
-        res.status(201).json({ message: 'User registered successfully' });
+        // Return the created user as a response
+        res.status(201).json({ message: 'User registered successfully', user });
     } catch (error) {
-        res.status(400).json({ error: error.message });
+        console.error('Error registering user:', error);
+        res.status(500).json({ error: 'Server error: Unable to register user at this time.' });
     }
 };
+
+
+
+//     // try {
+//     //     const existingUser = await User.findOne({ email });
+//     //     if (existingUser) {
+//     //         return res.status(400).json({ error: 'User already exists' });
+//     //     }
+
+//     //     const user = await User.create({ username, email, password, fruits, gender });
+//         res.status(201).json({ message: 'User registered successfully' });
+//     } catch (error) {
+//         res.status(400).json({ error: error.message });
+//     }
+// };
+
+
 
 // Log in an existing user
 const loginUser = async (req, res) => {
@@ -37,20 +85,22 @@ const loginUser = async (req, res) => {
     try {
         console.log(`Login attempt for username: ${username}`);
         
-        const user = await User.findOne({ username}); // Ensure case-insensitive search
-
-        console.log('Found user:', user); // This will log null if user is not found
+        const user = await User.findOne({ username });
+        console.log('Found user:', user);
 
         if (!user) {
             return res.status(404).json({ error: 'User not found' });
         }
 
         const isMatch = await user.comparePassword(password);
-        console.log('Password match:', isMatch); // Log the result of password comparison
+        console.log('Password match:', isMatch);
 
         if (!isMatch) {
             return res.status(401).json({ error: 'Invalid credentials' });
         }
+
+        // Optional: If using JWT, generate a token here
+        // const token = generateToken(user._id);
 
         res.status(200).json({ 
             message: 'Logged in successfully', 
@@ -113,8 +163,6 @@ const changeUserPassword = async (req, res) => {
     }
 };
 
-
-
 const forgetPassword = async (req, res) => {
     const { email, fruits } = req.body;
 
@@ -151,6 +199,17 @@ const forgetPassword = async (req, res) => {
     }
 };
 
+// Log out a user
+const logoutUser = async (req, res) => {
+    try {
+        // For JWT-based systems, remove the token from the client
+        res.status(200).json({ message: 'Logged out successfully' });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+
 const getUserDetails = async  (req, res) => { 
     const {username} = req.params; 
     try { 
@@ -172,4 +231,5 @@ module.exports = {
     changeUserPassword,
     forgetPassword,
     getUserDetails,
+    logoutUser
 };

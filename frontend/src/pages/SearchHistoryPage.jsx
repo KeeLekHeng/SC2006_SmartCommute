@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../context/UserContext';
 
 const SearchHistoryPage = () => {
   const { user: username } = useContext(UserContext);
+  const navigate = useNavigate();
   const [searchHistory, setSearchHistory] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const entriesPerPage = 5;
@@ -53,17 +55,36 @@ const SearchHistoryPage = () => {
 
   return (
     <div className="bg-teal-500 flex justify-center items-center h-screen p-4">
-      <div className="bg-white p-6 rounded-lg w-full max-w-4xl shadow-lg overflow-y-auto">
+      <div className="bg-white p-6 rounded-lg w-full max-w-4xl shadow-lg overflow-y-auto relative">
+        
+        {/* Back Button */}
+        <button 
+          onClick={() => navigate('/settings')} 
+          className="absolute top-4 left-4 flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded-full font-semibold hover:bg-gray-300 shadow transition duration-200"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5 mr-2"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+          Back
+        </button>
+
         <h1 className="font-bold text-center mb-6 text-lg text-gray-700">Search History</h1>
-        {/*clear history*/} 
-        <div className='mb-4 text-right'>
+        
+        {/* Clear History Button */}
+        <div className="mb-4 text-right">
           <button 
-          onClick={handleClearHistory}
-          className='bg-red-500 text-white p-2 rounded hover:bg-red-600 transition duration-300 '
+            onClick={handleClearHistory}
+            className="bg-red-500 text-white p-2 rounded hover:bg-red-600 transition duration-300"
           >
             Clear History
           </button>
-          </div>
+        </div>
 
         {/* Table */}
         <div className="overflow-x-auto">
@@ -80,9 +101,9 @@ const SearchHistoryPage = () => {
             </thead>
             <tbody>
               {currentEntries.length > 0 ? currentEntries.map((entry, index) => (
-                  <tr key={index} className="hover:bg-gray-100 transition duration-150">
+                <tr key={index} className="hover:bg-gray-100 transition duration-150">
                   <td className="py-3 px-4 border-b">
-                      {entry.timestamp 
+                    {entry.timestamp 
                       ? new Date(entry.timestamp).toLocaleString('en-SG', { timeZone: 'Asia/Singapore' })
                       : 'N/A'}
                   </td>

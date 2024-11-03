@@ -26,19 +26,28 @@ const MainApp = () => {
     }
   }, [location.state]);
 
+  useEffect(() => {
+    if (alert.show) {
+      const timer = setTimeout(() => {
+        setAlert({ ...alert, show: false });
+      }, 5000); // 5 seconds
+
+      return () => clearTimeout(timer); // Clear timeout if component unmounts or alert changes
+    }
+  }, [alert]);
+
   return (
-    <div className="min-h-screen flex flex-col bg-blue-100">
-      {/* Alert */}
+    <div className="w-full min-h-screen flex flex-col" style={{ backgroundColor: '#E8F0FA' }}> {/* Light Blue Gray Background */}
+
       {alert.show && (
         <div className="absolute top-0 left-0 right-0 p-4 z-50">
           <Alert type={alert.type} message={alert.message} onClose={closeAlert} />
         </div>
       )}
 
-      {/* Header */}
-      <nav className="fixed top-0 left-0 right-0 bg-blue-400 text-white shadow-md z-50 py-4">
-        <div className="flex items-center justify-between px-4">
-          {/* Logo */}
+      <nav className="fixed h-24 top-0 left-0 right-0 bg-[#4169E1] text-white shadow-md z-40 transition-all duration-300 overflow-hidden"> {/* Royal Blue Header */}
+        <div className="flex items-center justify-between h-full px-4">
+          {/* Logo Section */}
           <div className="flex items-center">
             <img src={Logo} alt="Logo" className="w-18 h-14 mr-6" />
             <span className="text-2xl font-bold">SmartCommute</span>
@@ -48,22 +57,28 @@ const MainApp = () => {
           <div className="flex space-x-8">
             <div className="flex flex-col items-center">
               <img src={home} alt="Home" className="w-14 h-14" />
-              <Link to="/main" className="hover:underline text-lg font-semibold">Home</Link>
+              <Link to="/main" className="hover:underline text-lg font-semibold transition duration-300 pb-2 text-white">
+                Home
+              </Link>
             </div>
             <div className="flex flex-col items-center">
               <img src={favourites} alt="Favourites" className="w-12 h-12 mb-2" />
-              <Link to="/favourites" className="hover:underline text-lg font-semibold">Favourites</Link>
+              <Link to="/favourites" className="hover:underline text-lg font-semibold transition duration-300 pb-2 text-white">
+                Favourites
+              </Link>
             </div>
             <div className="flex flex-col items-center">
               <img src={settings} alt="Settings" className="w-14 h-14" />
-              <Link to="/settings" className="hover:underline text-lg font-semibold">Settings</Link>
+              <Link to="/settings" className="hover:underline text-lg font-semibold transition duration-300 pb-2 text-white">
+                Settings
+              </Link>
             </div>
           </div>
         </div>
       </nav>
 
-      {/* Main Content */}
-      <div className="flex-1 pt-24 pb-20">
+      {/* Main content container that stretches to fill the space */}
+      <div className="pt-24 pb-12 flex-1 flex">
         <Routes>
           <Route path='/search' element={<SearchPage />} />
           <Route path='/' element={<SearchPage />} /> {/* Default route */}
@@ -73,12 +88,14 @@ const MainApp = () => {
         </Routes>
       </div>
 
-      {/* Footer */}
-      <footer className="bg-blue-400 text-white py-4 text-center fixed bottom-0 left-0 right-0">
-        <Link to="/review" className="hover:underline mb-1">
-          Leave us a review
+      <footer className="bg-[#4169E1] text-center text-lg text-white py-2 fixed bottom-0 w-full z-30"> {/* Royal Blue Footer */}
+        <Link to="/review" className="hover:underline mb-1 text-white">
+          <i className="material-icons text-yellow-500 mr-4">star</i>
+          Leave us a review 
+          <i className="material-icons text-yellow-500 ml-4">star</i>
         </Link>
-        <span className="block mt-2">www.smartcommutesg.com</span>
+
+        <span className="block mt-2 text-white"> www.smartcommutesg.com</span>
       </footer>
     </div>
   );
