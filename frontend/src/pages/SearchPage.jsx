@@ -177,6 +177,7 @@ const handleDestinationClear = () => {
   };
 
   const handleUseCurrentLocation = async () => {
+  const handleUseCurrentLocation = async () => {
     if (userLocation) {
       try {
         // Reverse geocode the coordinates to get the actual address
@@ -205,6 +206,8 @@ const handleDestinationClear = () => {
       }
     }
   };
+  
+  
   
   
 

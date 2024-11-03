@@ -1,12 +1,12 @@
 const express = require('express');
-const { registerUser, loginUser, changeUserPassword, forgetPassword, getUserDetails } = require('../controller/authController');
+const { registerUser, loginUser, forgetPassword, getUserDetails, changeUserPassword, updateUser } = require('../controller/authController');
 
 const router = express.Router();
 
 router.post('/register', registerUser);
 router.post('/login', loginUser);
 router.post('/forget', forgetPassword); // This should be correctly defined
-router.put('/change-password/:userId', changeUserPassword);
+router.put('/change-password/:username', changeUserPassword);
 router.get('/user/:username', getUserDetails);
 
 // POST a new workout

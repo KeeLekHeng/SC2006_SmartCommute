@@ -1,79 +1,99 @@
-import React, { useState, useEffect, } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+import axios from 'axios';
+import { UserContext } from '../context/UserContext';
 import boyAvatar from "../assets/boyAvatar.png";
 import girlAvatar from "../assets/girlAvatar.png";
 
-
-
 const avatars = {
-  boy: boyAvatar,
-  girl: girlAvatar,
+  male: boyAvatar,
+  female: girlAvatar,
 };
 
-const User = {
-  username: "Thuva",
-  avatar: avatars.boy,
+const Review = ({ review, onToggleUpvote }) => {
+  // Determine the avatar based on the gender from the review
+  const avatar = review.gender === 'female' ? avatars.female : avatars.male;
+
+  return (
+    <div className="bg-gray-100 p-4 border border-gray-300 rounded mb-4 text-left relative">
+      <div className="flex items-center mb-2">
+        <img src={avatar} alt="avatar" className="w-10 h-10 rounded-full mr-2" />
+        <p className="font-bold">{review.username}</p>
+      </div>
+      <p>{review.review}</p>
+      <div className="flex justify-between items-center mt-2">
+        <small>{new Date(review.date).toLocaleString()}</small>
+        <button
+          onClick={() => onToggleUpvote(review)}
+          className={`p-2 rounded ${review.hasUpvoted ? "bg-green-500 text-white" : "bg-gray-100 text-black"} absolute right-2 top-1/2 transform -translate-y-1/2`}
+        >
+          Upvote ({review.upvotes})
+        </button>
+      </div>
+    </div>
+  );
 };
-
-const Review = ({ review, onToggleUpvote }) => (        //CAN CONSIDER TO CHANGE THIS TO A COMPONENT TO LOOK NEATER
-
-
-  <div className="bg-gray-100 p-4 border border-gray-300 rounded mb-4 text-left relative">
-    <div className="flex items-center mb-2">
-      <img src={review.avatar} alt="avatar" className="w-10 h-10 rounded-full mr-2" />
-      <p className="font-bold">{review.username}</p>
-    </div>
-    <p>{review.text}</p>
-    <div className="flex justify-between items-center mt-2">
-      <small>{new Date(review.date).toLocaleString()}</small>
-      <button
-        onClick={() => onToggleUpvote(review.id)}
-        className={`p-2 rounded ${review.hasUpvoted ? "bg-green-500 text-white" : "bg-gray-100 text-black"} absolute right-2 top-1/2 transform -translate-y-1/2`}
-      >
-        Upvote ({review.upvotes})
-      </button>
-    </div>
-  </div>
-);
 
 const ReviewPage = () => {
-  const [reviews, setReviews] = useState([
-    // Sample reviews
-  ]);
-
+  const { user: username, gender } = useContext(UserContext);
+  const [reviews, setReviews] = useState([]);
   const [newReview, setNewReview] = useState('');
   const [filter, setFilter] = useState('mostRecent');
   const [currentPage, setCurrentPage] = useState(1);
   const reviewsPerPage = 5;
 
-  useEffect(() => {      //BACKEND NEED CHANGE THIS TO NOT LOCAL STORAGE USE MONGODB
-    const storedReviews = localStorage.getItem('reviews');
-    if (storedReviews) {
-      setReviews(JSON.parse(storedReviews));
-    }
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        const response = await axios.get('http://localhost:4000/review/get');
+        const updatedReviews = response.data.map(review => ({
+          ...review,
+          hasUpvoted: false, // Add initial upvote state for each review
+        }));
+        setReviews(updatedReviews);
+      } catch (error) {
+        console.error('Error fetching reviews:', error);
+      }
+    };
+    fetchReviews();
   }, []);
 
-  useEffect(() => {       //BACKEND NEED CHANGE THIS TO NOT LOCAL STORAGE USE MONGODB
-    localStorage.setItem('reviews', JSON.stringify(reviews));
-  }, [reviews]);
-
-  const handleSubmitReview = () => {
-    if (newReview.trim()) {
-      const updatedReviews = [
-        ...reviews,
-        { id: Date.now(), text: newReview, upvotes: 0, hasUpvoted: false, date: new Date(), username: User.username, avatar: User.avatar },
-      ];
-      setReviews(updatedReviews);
-      setNewReview('');
+  const handleSubmitReview = async () => {
+    if (newReview.trim() && username && gender) {
+      try {
+        const response = await axios.post('http://localhost:4000/review/add', {
+          review: newReview,
+          username: username,
+          gender: gender,
+        });
+        setReviews([...reviews, { ...response.data, hasUpvoted: false }]);
+        setNewReview('');
+      } catch (error) {
+        console.error('Error submitting review:', error);
+      }
+    } else {
+      console.error('User data is not available or review is empty.');
     }
   };
 
-  const handleToggleUpvote = (id) => {
-    const updatedReviews = reviews.map((review) =>
-      review.id === id
-        ? { ...review, upvotes: review.hasUpvoted ? review.upvotes - 1 : review.upvotes + 1, hasUpvoted: !review.hasUpvoted }
-        : review
-    );
-    setReviews(updatedReviews);
+  const handleToggleUpvote = async (review) => {
+    try {
+      const action = review.hasUpvoted ? 'decrement' : 'increment';
+      const response = await axios.put(`http://localhost:4000/review/upvote`, {
+        action,
+        username: review.username,
+        review: review.review,
+      });
+
+      const updatedReview = response.data;
+
+      setReviews(reviews.map(r => 
+        (r.username === review.username && r.review === review.review
+          ? { ...updatedReview, hasUpvoted: !review.hasUpvoted } // Toggle hasUpvoted state
+          : r)
+      ));
+    } catch (error) {
+      console.error('Error toggling upvote:', error);
+    }
   };
 
   const sortedReviews = [...reviews].sort((a, b) => {
@@ -104,7 +124,6 @@ const ReviewPage = () => {
     <div className="bg-teal-500 flex justify-center items-center h-screen">
       <div className="bg-white p-5 rounded-lg w-full max-w-lg h-full max-h-[90vh] shadow-lg overflow-y-auto">
         <h1 className="font-bold text-center mb-4">Leave a Review</h1>
-
         <div className="mb-4">
           <textarea
             value={newReview}
@@ -131,7 +150,7 @@ const ReviewPage = () => {
           <h2 className="font-bold">Reviews</h2>
           {currentReviews.length > 0 ? (
             currentReviews.map((review) => (
-              <Review key={review.id} review={review} onToggleUpvote={handleToggleUpvote} />
+              <Review key={`${review.username}-${review.review}`} review={review} onToggleUpvote={handleToggleUpvote} />
             ))
           ) : (
             <p>No reviews yet. Be the first to leave one!</p>

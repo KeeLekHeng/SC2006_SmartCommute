@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+import axios from 'axios';
 import Logo from '../assets/logo.png';
 import Alert from '../components/Alert';
 
-const ForgetPasswordPage = () => {
+const UpdatePasswordPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const username = location.state?.username || ''; // Get username from location state
+
   const [email, setEmail] = useState('');
   const [fruit, setFruit] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -12,22 +16,23 @@ const ForgetPasswordPage = () => {
 
   const handleSendClick = async () => {
     try {
-      const response = await fetch('http://localhost:4000/authRoutes/change-password/:userId', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, fruit, newPassword }),
+      console.log(username);
+      const response = await axios.put(`http://localhost:4000/authRoutes/change-password/${username}`, {
+        email,
+        fruits: fruit,
+        newPassword,
       });
-      const result = await response.json();
 
-      if (result.success) {
+      if (response.status === 200) {
         setAlert({ show: true, message: 'Password reset successfully!', type: 'success' });
         setTimeout(() => {
-          navigate('/login'); // Redirect to login page after password reset
+          navigate('/settings');
         }, 2000);
       } else {
-        setAlert({ show: true, message: result.error || 'Error resetting password', type: 'error' });
+        setAlert({ show: true, message: response.data.error || 'Error resetting password', type: 'error' });
       }
     } catch (error) {
+      console.error('Error:', error);
       setAlert({ show: true, message: 'Server error. Please try again later.', type: 'error' });
     }
   };
@@ -35,7 +40,7 @@ const ForgetPasswordPage = () => {
   const closeAlert = () => setAlert({ ...alert, show: false });
 
   return (
-    <div className="flex items-center justify-center h-screen bg-cyan-200 overflow-hidden">
+    <div className="bg-gradient-to-r from-teal-400 to-teal-600 flex items-center justify-center h-screen overflow-hidden">
       <div className="absolute top-0 left-0 right-0 p-4">
         {alert.show && <Alert type={alert.type} message={alert.message} onClose={closeAlert} />}
       </div>
@@ -46,7 +51,7 @@ const ForgetPasswordPage = () => {
           <h2 className="text-teal-700 text-3xl font-bold">SmartCommute</h2>
         </header>
 
-        <h1 className="text-4xl font-bold text-teal-700 mb-6">Reset Password</h1>
+        <h1 className="text-4xl font-bold text-teal-700 mb-6">Change Password</h1>
 
         <main className="w-full">
           <label className="block text-gray-700 text-left mb-2 text-lg">Enter your Email</label>
@@ -77,7 +82,7 @@ const ForgetPasswordPage = () => {
           />
 
           <button
-            className="w-full bg-teal-500 text-white py-3 px-6 rounded-lg font-bold text-lg hover:bg-teal-600 transition mb-4"
+            className="w-full bg-teal-500 text-white py-3 px-6 rounded-lg font-bold text-lg hover:bg-teal-600 transition mb-4 shadow-md hover:shadow-lg"
             onClick={handleSendClick}
           >
             Reset Password
@@ -85,9 +90,9 @@ const ForgetPasswordPage = () => {
 
           <button
             className="w-full bg-gray-300 text-teal-700 py-3 px-6 rounded-lg font-bold text-lg hover:bg-gray-400 transition"
-            onClick={() => navigate('/login')}
+            onClick={() => navigate('/settings')}
           >
-            Back to Login
+            Back to Settings
           </button>
         </main>
       </div>
@@ -95,4 +100,4 @@ const ForgetPasswordPage = () => {
   );
 };
 
-export default ForgetPasswordPage;
+export default UpdatePasswordPage;
