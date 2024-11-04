@@ -3,7 +3,7 @@
 
 ## Mission Statement
 
-**SmartCommute** aims to be the go-to transportation app for commuters in Singapore by enabling users to find the best possible transportation options to reach their destinations in real-time. By integrating data from various public transportation options, taxi booking platforms, and pricing information, SmartCommute helps users evaluate estimated travel times and costs across available modes of transportation, ranking them to recommend the optimal choice. Our app is also personalized, allowing users to save preferences, so that recommendations are tailored to individual needs. With these personalized and data-driven recommendations, SmartCommute supports Singapore’s ambition of becoming a Smart Nation by providing an educational and assistive tool for efficient and economical travel.
+**SmartCommute** aims to be the go-to transportation app for commuters in Singapore by enabling users to find the best possible transportation options to reach their destinations in real-time. By integrating data from various public transportation options, taxi booking platforms, and pricing information, SmartCommute helps users evaluate estimated travel times and costs across available modes of transportation, ranking them to recommend the optimal choice. 
 
 ## Features
 
