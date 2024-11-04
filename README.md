@@ -12,17 +12,6 @@
 - **Comprehensive Travel Information**: The app compiles all relevant data from multiple sources into a single platform, removing the need for users to navigate multiple apps.
 - **Cost-Effective and Time-Saving Focus**: SmartCommute highlights economical and efficient travel options, aiding users in making informed decisions about daily commutes.
 
-## Market Research
-
-The current commuting landscape in Singapore shows a need for a comprehensive app like SmartCommute:
-
-- **High Public Transportation Use**: Only 34% of Singapore residents own a car, while daily MRT and bus users number over 3 million each.
-- **Long Commute Times and High Costs**: Singaporeans spend an average of 84 minutes commuting by public transport and allocate 4.8% of their disposable income to transportation, with rising fare prices.
-- **Dissatisfaction with Current Options**: Public satisfaction with transportation options has decreased from 99.4% in 2019 to 93% in 2022, indicating frustration with long commutes and increasing costs.
-- **Increased Taxi Use Despite Costs**: Even with a drop in average daily taxi ridership, many Singaporeans still choose more expensive options to reduce travel time.
-
-**SmartCommute** aims to address these challenges by offering a streamlined, data-driven solution that combines real-time cost, time, and convenience metrics to meet commuter needs.
-
 ## Target Audience
 
 SmartCommute is designed for commuters who want to:
@@ -51,6 +40,7 @@ To start using SmartCommute, follow these steps:
    **Frontend**
    ```makefile
    REACT_APP_GMAPSAPI=your_google_maps_api_key
+   
    **Backend**
    ```makefile
    MONG_URI =your_mongodb_uri
