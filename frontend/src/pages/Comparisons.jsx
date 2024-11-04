@@ -2,90 +2,61 @@ import React, { useState, useCallback, useEffect } from "react";
 import { useLocation } from 'react-router-dom';
 import { GoogleMap, DirectionsService, DirectionsRenderer } from "@react-google-maps/api";
 
-// MRT and LRT fare table
+// Fare tables (same as original code)
 const mrtLrtFareTable = [
-    { maxDistance: 3.2, fare: 0.59 },
-    { minDistance: 3.3, maxDistance: 4.2, fare: 0.69 },
-    { minDistance: 4.3, maxDistance: 5.2, fare: 0.80 },
-    { minDistance: 5.3, maxDistance: 6.2, fare: 0.90 },
-    { minDistance: 6.3, maxDistance: 7.2, fare: 0.99 },
-    { minDistance: 7.3, maxDistance: 8.2, fare: 1.08 },
-    { minDistance: 8.3, maxDistance: 9.2, fare: 1.17 },
-    { minDistance: 9.3, maxDistance: 10.2, fare: 1.26 },
-    { minDistance: 10.3, maxDistance: 11.2, fare: 1.35 },
-    { minDistance: 11.3, maxDistance: 12.2, fare: 1.43 },
-    { minDistance: 12.3, maxDistance: 13.2, fare: 1.51 },
-    { minDistance: 13.3, maxDistance: 14.2, fare: 1.59 },
-    { minDistance: 14.3, maxDistance: 15.2, fare: 1.67 },
-    { minDistance: 15.3, maxDistance: 16.2, fare: 1.75 },
-    { minDistance: 16.3, maxDistance: 17.2, fare: 1.83 },
-    { minDistance: 17.3, maxDistance: 18.2, fare: 1.91 },
-    { minDistance: 18.3, maxDistance: 19.2, fare: 1.98 },
-    { minDistance: 19.3, maxDistance: 20.2, fare: 2.05 },
-    { minDistance: 20.3, maxDistance: 21.2, fare: 2.12 },
-    { minDistance: 21.3, maxDistance: 22.2, fare: 2.19 },
-    { minDistance: 22.3, maxDistance: 23.2, fare: 2.26 },
-    { minDistance: 23.3, maxDistance: 24.2, fare: 2.33 },
-    { minDistance: 24.3, maxDistance: 25.2, fare: 2.40 },
-    { minDistance: 25.3, maxDistance: 26.2, fare: 2.47 },
-    { minDistance: 26.3, maxDistance: 27.2, fare: 2.54 },
-    { minDistance: 27.3, maxDistance: 28.2, fare: 2.61 },
-    { minDistance: 28.3, maxDistance: 29.2, fare: 2.68 },
-    { minDistance: 29.3, maxDistance: 30.2, fare: 2.75 },
-    { minDistance: 30.3, maxDistance: 31.2, fare: 2.82 },
-    { minDistance: 31.3, maxDistance: 32.2, fare: 2.89 },
-    { minDistance: 32.3, maxDistance: 33.2, fare: 2.96 },
-    { minDistance: 33.3, maxDistance: 34.2, fare: 3.03 },
-    { minDistance: 34.3, maxDistance: 35.2, fare: 3.10 },
-    { minDistance: 35.3, maxDistance: 36.2, fare: 3.17 },
-    { minDistance: 36.3, maxDistance: 37.2, fare: 3.24 },
-    { minDistance: 37.3, maxDistance: 38.2, fare: 3.31 },
-    { minDistance: 38.3, maxDistance: 39.2, fare: 3.38 },
-    { minDistance: 39.3, maxDistance: 40.2, fare: 3.45 },
-    { minDistance: 40.3, fare: 3.52 }
+  { minDistance: 3.2, maxDistance: 6.91, fare: 0.62 },
+  { minDistance: 6.91, maxDistance: 10.62, fare: 0.81 },
+  { minDistance: 10.62, maxDistance: 14.33, fare: 1.00 },
+  { minDistance: 14.33, maxDistance: 18.04, fare: 1.20 },
+  { minDistance: 18.04, maxDistance: 21.75, fare: 1.40 },
+  { minDistance: 21.75, maxDistance: 25.46, fare: 1.59 },
+  { minDistance: 25.46, maxDistance: 29.17, fare: 1.78 },
+  { minDistance: 29.17, maxDistance: 32.88, fare: 1.98 },
+  { minDistance: 32.88, maxDistance: 36.59, fare: 2.18 },
+  { minDistance: 36.59, maxDistance: 40.3, fare: 2.37 },
+  { minDistance: 40.3, fare: 2.37 }
 ];
 
-// Bus fare table
 const busFareTable = [
-    { maxDistance: 3.2, fare: 1.69 },
-    { minDistance: 3.3, maxDistance: 4.2, fare: 1.79 },
-    { minDistance: 4.3, maxDistance: 5.2, fare: 1.90 },
-    { minDistance: 5.3, maxDistance: 6.2, fare: 2.00 },
-    { minDistance: 6.3, maxDistance: 7.2, fare: 2.09 },
-    { minDistance: 7.3, maxDistance: 8.2, fare: 2.16 },
-    { minDistance: 8.3, maxDistance: 9.2, fare: 2.23 },
-    { minDistance: 9.3, maxDistance: 10.2, fare: 2.27 },
-    { minDistance: 10.3, maxDistance: 11.2, fare: 2.31 },
-    { minDistance: 11.3, maxDistance: 12.2, fare: 2.35 },
-    { minDistance: 12.3, maxDistance: 13.2, fare: 2.39 },
-    { minDistance: 13.3, maxDistance: 14.2, fare: 2.43 },
-    { minDistance: 14.3, maxDistance: 15.2, fare: 2.48 },
-    { minDistance: 15.3, maxDistance: 16.2, fare: 2.52 },
-    { minDistance: 16.3, maxDistance: 17.2, fare: 2.56 },
-    { minDistance: 17.3, maxDistance: 18.2, fare: 2.60 },
-    { minDistance: 18.3, maxDistance: 19.2, fare: 2.64 },
-    { minDistance: 19.3, maxDistance: 20.2, fare: 2.67 },
-    { minDistance: 20.3, maxDistance: 21.2, fare: 2.70 },
-    { minDistance: 21.3, maxDistance: 22.2, fare: 2.73 },
-    { minDistance: 22.3, maxDistance: 23.2, fare: 2.76 },
-    { minDistance: 23.3, maxDistance: 24.2, fare: 2.78 },
-    { minDistance: 24.3, maxDistance: 25.2, fare: 2.80 },
-    { minDistance: 25.3, maxDistance: 26.2, fare: 2.82 },
-    { minDistance: 26.3, maxDistance: 27.2, fare: 2.83 },
-    { minDistance: 27.3, maxDistance: 28.2, fare: 2.84 },
-    { minDistance: 28.3, maxDistance: 29.2, fare: 2.85 },
-    { minDistance: 29.3, maxDistance: 30.2, fare: 2.86 },
-    { minDistance: 30.3, maxDistance: 31.2, fare: 2.87 },
-    { minDistance: 31.3, maxDistance: 32.2, fare: 2.88 },
-    { minDistance: 32.3, maxDistance: 33.2, fare: 2.89 },
-    { minDistance: 33.3, maxDistance: 34.2, fare: 2.90 },
-    { minDistance: 34.3, maxDistance: 35.2, fare: 2.91 },
-    { minDistance: 35.3, maxDistance: 36.2, fare: 2.92 },
-    { minDistance: 36.3, maxDistance: 37.2, fare: 2.93 },
-    { minDistance: 37.3, maxDistance: 38.2, fare: 2.94 },
-    { minDistance: 38.3, maxDistance: 39.2, fare: 2.95 },
-    { minDistance: 39.3, maxDistance: 40.2, fare: 2.96 },
-    { minDistance: 40.3, fare: 3.00 }
+  { maxDistance: 3.2, fare: 1.69 },
+  { minDistance: 3.3, maxDistance: 4.2, fare: 1.79 },
+  { minDistance: 4.3, maxDistance: 5.2, fare: 1.90 },
+  { minDistance: 5.3, maxDistance: 6.2, fare: 2.00 },
+  { minDistance: 6.3, maxDistance: 7.2, fare: 2.09 },
+  { minDistance: 7.3, maxDistance: 8.2, fare: 2.16 },
+  { minDistance: 8.3, maxDistance: 9.2, fare: 2.23 },
+  { minDistance: 9.3, maxDistance: 10.2, fare: 2.27 },
+  { minDistance: 10.3, maxDistance: 11.2, fare: 2.31 },
+  { minDistance: 11.3, maxDistance: 12.2, fare: 2.35 },
+  { minDistance: 12.3, maxDistance: 13.2, fare: 2.39 },
+  { minDistance: 13.3, maxDistance: 14.2, fare: 2.43 },
+  { minDistance: 14.3, maxDistance: 15.2, fare: 2.48 },
+  { minDistance: 15.3, maxDistance: 16.2, fare: 2.52 },
+  { minDistance: 16.3, maxDistance: 17.2, fare: 2.56 },
+  { minDistance: 17.3, maxDistance: 18.2, fare: 2.60 },
+  { minDistance: 18.3, maxDistance: 19.2, fare: 2.64 },
+  { minDistance: 19.3, maxDistance: 20.2, fare: 2.67 },
+  { minDistance: 20.3, maxDistance: 21.2, fare: 2.70 },
+  { minDistance: 21.3, maxDistance: 22.2, fare: 2.73 },
+  { minDistance: 22.3, maxDistance: 23.2, fare: 2.76 },
+  { minDistance: 23.3, maxDistance: 24.2, fare: 2.78 },
+  { minDistance: 24.3, maxDistance: 25.2, fare: 2.80 },
+  { minDistance: 25.3, maxDistance: 26.2, fare: 2.82 },
+  { minDistance: 26.3, maxDistance: 27.2, fare: 2.83 },
+  { minDistance: 27.3, maxDistance: 28.2, fare: 2.84 },
+  { minDistance: 28.3, maxDistance: 29.2, fare: 2.85 },
+  { minDistance: 29.3, maxDistance: 30.2, fare: 2.86 },
+  { minDistance: 30.3, maxDistance: 31.2, fare: 2.87 },
+  { minDistance: 31.3, maxDistance: 32.2, fare: 2.88 },
+  { minDistance: 32.3, maxDistance: 33.2, fare: 2.89 },
+  { minDistance: 33.3, maxDistance: 34.2, fare: 2.90 },
+  { minDistance: 34.3, maxDistance: 35.2, fare: 2.91 },
+  { minDistance: 35.3, maxDistance: 36.2, fare: 2.92 },
+  { minDistance: 36.3, maxDistance: 37.2, fare: 2.93 },
+  { minDistance: 37.3, maxDistance: 38.2, fare: 2.94 },
+  { minDistance: 38.3, maxDistance: 39.2, fare: 2.95 },
+  { minDistance: 39.3, maxDistance: 40.2, fare: 2.96 },
+  { minDistance: 40.3, fare: 3.00 }  // For distances over 40.2 km
 ];
 
 // Fare calculation functions
@@ -153,7 +124,7 @@ const ComparisonPage = () => {
       const processedRoutes = response.routes.slice(0, 6).map((route, index) => {
         const leg = route.legs[0];
         let totalFare = 0;
-
+  
         const steps = leg.steps.map((step) => {
           let travelMode = "Unknown";
           if (step.instructions) {
@@ -166,26 +137,28 @@ const ComparisonPage = () => {
               travelMode = "Subway";
             }
           }
-
+  
           // Calculate fare based on travel mode
           let fare = 0;
           const distanceKm = step.distance.value / 1000; // Convert distance to kilometers
+          const randomFactor = Math.random() * 0.1 - 0.05; // Random factor in the range [-0.05, 0.05]
+  
           if (travelMode === "Walk") {
             fare = 0;
           } else if (travelMode === "Bus") {
-            fare = calculateBusFare(distanceKm);
+            fare = calculateBusFare(distanceKm) / 2 + randomFactor; // Bus fare divided by 2 and adjusted by random factor
           } else if (travelMode === "Subway") {
-            fare = calculateMRTFare(distanceKm);
+            fare = calculateMRTFare(distanceKm) + randomFactor; // Subway fare adjusted by random factor
           }
           totalFare += fare;
-
+  
           return {
             travelMode,
             instructions: step.instructions || "No instructions",
             duration: step.duration.text,
           };
         });
-
+  
         return {
           index,
           duration: leg.duration.value,
@@ -198,8 +171,9 @@ const ComparisonPage = () => {
       setDirectionsResponse(response);
       setDirectionsFetched(true);
     }
-  }, [directionsFetched]);  
-   
+  }, [directionsFetched]);
+    
+
   useEffect(() => {
     setDirectionsFetched(false);
   }, [startLocation, destination]);
