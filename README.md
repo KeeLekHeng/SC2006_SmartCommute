@@ -40,9 +40,20 @@ To start using SmartCommute, follow these steps:
    git clone https://github.com/yourusername/SmartCommute.git
    cd SmartCommute
 
-2. **Install Dependencies**:
-3. ```bash
+2. **Install Dependencies**: Navigate to both frontend and backend directories to install dependencies
+   ```bash
    cd frontend
    npm install
-   cd../backend
+   cd ../backend
    npm install
+
+3. **Set Up Environment Variables**: Create a .env file in both frontend and backend.
+   **Frontend**
+   ```makefile
+   REACT_APP_GMAPSAPI=your_google_maps_api_key
+   **Backend**
+   ```makefile
+   MONG_URI =your_mongodb_uri
+   
+   
+   
