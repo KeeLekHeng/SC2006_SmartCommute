@@ -80,7 +80,7 @@ const DisplayInfoPage = () => {
 
           <div className="flex flex-col items-center mb-6">
             <img
-              src={gender === 'Male' ? avatars.Male : avatars.Female}
+              src={gender === 'male' ? avatars.Male : avatars.Female}
               alt="User Avatar"
               className="w-32 h-32 rounded-full mb-4 shadow-md"
             />
