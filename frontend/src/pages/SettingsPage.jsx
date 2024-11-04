@@ -1,14 +1,16 @@
-import React, { useContext } from "react";
+import React, { useState, useContext } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { UserContext } from '../context/UserContext';
 import settings from '../assets/setttings.png';
 import favourites from '../assets/fav.png';
 import home from '../assets/home.png';
 import Logo from '../assets/logo1.png';
+import Alert from '../components/Alert';
 
 const SettingsPage = () => {
     const navigate = useNavigate();
     const { logout } = useContext(UserContext);
+    const [alert, setAlert] = useState({ show: false, message: '', type: '' });
 
     const handleDisplayInfo = () => {
         navigate('/display');
@@ -20,14 +22,19 @@ const SettingsPage = () => {
 
     const handleLogout = () => {
         logout();
-        navigate('/');
+
+        localStorage.setItem('logoutSuccess', 'true');
+
+        navigate('/', {
+            state: { alert: { show: true, message: 'Logout successful!', type: 'success' } },
+        });
     };
 
     return (
-        <div className="flex flex-col h-screen" style={{ backgroundColor: '#E8F0FA' }}> {/* Light Blue Gray Background */}
+        <div className="flex flex-col h-screen" style={{ backgroundColor: '#F3F4F6' }}>
             
             {/* Header */}
-            <nav className="fixed h-24 top-0 left-0 right-0 bg-[#4169E1] text-white shadow-md z-40 transition-all duration-300"> {/* Royal Blue Header */}
+            <nav className="fixed h-24 top-0 left-0 right-0 bg-[#6A5ACD] text-white shadow-md z-40 transition-all duration-300">
                 <div className="flex items-center justify-between h-full px-4">
                     <div className="flex items-center"> 
                         <img src={Logo} alt="Logo" className="w-18 h-14 mr-6" />
@@ -65,19 +72,19 @@ const SettingsPage = () => {
                     <div className="space-y-4">
                         <button 
                             onClick={handleDisplayInfo} 
-                            className="p-3 bg-gradient-to-r from-blue-500 to-blue-700 text-white rounded-lg w-full flex items-center justify-center hover:from-blue-600 hover:to-blue-800 transition duration-300 shadow-md hover:shadow-lg mb-2"
+                            className="p-3 bg-gradient-to-r from-blue-400 to-blue-600 text-white rounded-lg w-full flex items-center justify-center hover:from-blue-500 hover:to-blue-700 transition duration-300 shadow-md hover:shadow-lg mb-2"
                         >
                             Display Info
                         </button>
                         <button 
                             onClick={handleTravelHistory} 
-                            className="p-3 bg-gradient-to-r from-blue-500 to-blue-700 text-white rounded-lg w-full flex items-center justify-center hover:from-blue-600 hover:to-blue-800 transition duration-300 shadow-md hover:shadow-lg mb-2"
+                            className="p-3 bg-gradient-to-r from-blue-400 to-blue-600 text-white rounded-lg w-full flex items-center justify-center hover:from-blue-500 hover:to-blue-700 transition duration-300 shadow-md hover:shadow-lg mb-2"
                         >
                             Search History
                         </button>
                         <button 
                             onClick={handleLogout} 
-                            className="p-3 bg-gradient-to-r from-red-500 to-red-700 text-white rounded-lg w-full flex items-center justify-center hover:from-red-600 hover:to-red-800 transition duration-300 shadow-md hover:shadow-lg"
+                            className="p-3 bg-gradient-to-r from-red-400 to-red-600 text-white rounded-lg w-full flex items-center justify-center hover:from-red-500 hover:to-red-700 transition duration-300 shadow-md hover:shadow-lg"
                         >
                             Log Out
                         </button>
@@ -85,8 +92,15 @@ const SettingsPage = () => {
                 </div>
             </div>
 
+            {/* Full-width Alert */}
+            {alert.show && (
+                <div className="fixed top-0 left-0 w-full z-50 flex justify-center mt-6">
+                    <Alert type={alert.type} message={alert.message} onClose={() => setAlert({ show: false })} />
+                </div>
+            )}
+
             {/* Footer */}
-            <footer className="bg-[#4169E1] text-center text-lg text-white py-2 fixed bottom-0 w-full z-30"> {/* Royal Blue Footer */}
+            <footer className="bg-[#6A5ACD] text-center text-lg text-white py-2 fixed bottom-0 w-full z-30">
                 <Link to="/review" className="hover:underline mb-1 text-white">
                     <i className="material-icons text-yellow-500 mr-4">star</i>
                     Leave us a review 
@@ -94,7 +108,6 @@ const SettingsPage = () => {
                 </Link>
                 <span className="block mt-2 text-white"> www.smartcommutesg.com</span>
             </footer>
-
         </div>
     );
 };

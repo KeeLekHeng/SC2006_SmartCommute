@@ -51,6 +51,7 @@ import axios from 'axios';
 
 export const UserContext = createContext();
 
+
 export const UserProvider = ({ children }) => {
   // Initialize state with values from localStorage if available
   const [user, setUser] = useState(localStorage.getItem('username') || '');

@@ -1,20 +1,42 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import logo from '../assets/logo.png';
+import React, { useEffect, useState } from 'react';
+import Alert from '../components/Alert';
 
 const LandingPage = () => {
     const navigate = useNavigate();
+    const location = useLocation();
+    const [alert, setAlert] = useState({ show: false, message: '', type: '' });
+
+    useEffect(() => {
+        // Check for alert state passed via location
+        if (location.state && location.state.alert) {
+            setAlert(location.state.alert);
+
+            // Clear the alert after a few seconds
+            setTimeout(() => {
+                setAlert({ show: false });
+            }, 5000); // Adjust the timeout duration as needed
+        }
+    }, [location.state]);
 
     const handleGetStarted = () => {
         navigate('/gps'); // Navigate to the GPS page
     };
 
     return (
-        <div className="bg-[#4169E1] flex items-center justify-center h-screen">
+        <div className="bg-gradient-to-r from-teal-400 to-teal-600 flex items-center justify-center h-screen relative">
+            {/* Full-width Alert at the Top */}
+            {alert.show && (
+                <div className="fixed top-0 left-0 right-0 z-50">
+                    <Alert type={alert.type} message={alert.message} onClose={() => setAlert({ show: false })} />
+                </div>
+            )}
+
             <div className="w-11/12 max-w-lg bg-white shadow-lg rounded-lg p-6 mx-4 flex flex-col items-center">
                 <header className="flex flex-col items-center mb-6">
-                    <img src={logo} alt="logo" className="mb-4 h-40 -ml-0.5" /> {/* Adjusted with -ml-0.5 for 2px left shift */}
-                    <h1 className="text-white text-4xl font-bold text-center">SmartCommute</h1>
+                    <img src={logo} alt="logo" className="mb-4 h-40 -ml-0.5" />
+                    <h1 className="text-teal-700 text-4xl font-bold text-center">SmartCommute</h1>
                 </header>
 
                 <main className="w-full text-center mb-6">
