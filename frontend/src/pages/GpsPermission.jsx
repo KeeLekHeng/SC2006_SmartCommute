@@ -19,7 +19,7 @@ const GpsPermission = () => {
   };
 
   return (
-    <div className="flex items-center justify-center h-screen bg-gradient-to-r from-teal-400 to-teal-600 overflow-hidden">
+    <div className="flex items-center justify-center h-screen bg-[#4169E1] overflow-hidden">
       <div className="bg-white w-full max-w-md rounded-lg shadow-lg p-6">
         {/* Logo and Title */}
         <header className="flex flex-col items-center space-y-4 mb-6">
@@ -36,7 +36,7 @@ const GpsPermission = () => {
           <div className="flex space-x-2 mb-6">
             <button
               onClick={() => handleAllowGps()}
-              className="w-40 px-4 py-3 bg-teal-500 text-white rounded-lg font-bold hover:bg-teal-600 transition duration-300 shadow-md"
+              className="w-40 px-4 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg font-bold hover:from-blue-600 hover:to-blue-700 transition duration-300 shadow-md"
             >
               Allow
             </button>

@@ -66,7 +66,7 @@ const LoginPage = () => {
   }, [location.state]);
 
   return (
-    <div className="flex items-center justify-center h-screen bg-gradient-to-r from-teal-400 to-teal-600 overflow-hidden">
+    <div className="flex items-center justify-center h-screen bg-[#4169E1] overflow-hidden">
       <div className="absolute top-0 left-0 right-0 p-4">
         {alert.show && <Alert type={alert.type} message={alert.message} onClose={closeAlert} />}
       </div>
@@ -92,10 +92,10 @@ const LoginPage = () => {
 
         <header className="mb-6 text-center relative w-full flex flex-col items-center">
           <img src={Logo} alt="logo" className="mb-4 h-48" />
-          <h2 className="text-teal-700 text-3xl font-bold">SmartCommute</h2>
+          <h2 className="text-[#1D4ED8] text-3xl font-bold">SmartCommute</h2>
         </header>
 
-        <h1 className="text-4xl font-bold text-teal-700 mb-6">Login</h1>
+        <h1 className="text-4xl font-bold text-[#1D4ED8] mb-6">Login</h1>
 
         <main className="w-full">
           <label className="block text-gray-700 text-left mb-2 text-lg">Enter your Username</label>
@@ -120,7 +120,7 @@ const LoginPage = () => {
 
           <div className="text-right mb-6">
             <button
-              className="text-teal-700 font-bold text-sm cursor-pointer hover:underline"
+              className="text-[#1D4ED8] font-bold text-sm cursor-pointer hover:underline"
               onClick={handleForgetPasswordClick}
             >
               Forget Password?
@@ -128,7 +128,7 @@ const LoginPage = () => {
           </div>
 
           <button
-            className="w-full bg-gradient-to-r from-blue-400 to-blue-600 text-white py-3 px-6 rounded-lg font-bold text-lg hover:from-blue-500 hover:to-blue-700 transition duration-300 shadow-md hover:shadow-lg mb-4"
+            className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-3 px-6 rounded-lg font-bold text-lg hover:from-[#1E40AF] hover:to-[#2563EB] transition duration-300 shadow-md hover:shadow-lg mb-4"
             onClick={handleLoginClick}
           >
             Login
@@ -137,7 +137,7 @@ const LoginPage = () => {
           <p className="text-center text-gray-600">
             New User?{' '}
             <button
-              className="text-teal-700 font-bold cursor-pointer hover:underline"
+              className="text-[#1D4ED8] font-bold cursor-pointer hover:underline"
               onClick={handleRegisterClick}
             >
               Register

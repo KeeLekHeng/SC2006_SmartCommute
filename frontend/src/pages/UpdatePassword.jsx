@@ -40,7 +40,7 @@ const UpdatePasswordPage = () => {
   const closeAlert = () => setAlert({ ...alert, show: false });
 
   return (
-    <div className="bg-gradient-to-r from-teal-400 to-teal-600 flex items-center justify-center h-screen overflow-hidden">
+    <div className="bg-[#4169E1] flex items-center justify-center h-screen overflow-hidden">
       <div className="absolute top-0 left-0 right-0 p-4">
         {alert.show && <Alert type={alert.type} message={alert.message} onClose={closeAlert} />}
       </div>
@@ -48,10 +48,10 @@ const UpdatePasswordPage = () => {
       <div className="w-11/12 max-w-md bg-white shadow-lg rounded-lg p-8 mx-4 flex flex-col items-center">
         <header className="mb-6 text-center">
           <img src={Logo} alt="logo" className="mb-4 h-40" />
-          <h2 className="text-teal-700 text-3xl font-bold">SmartCommute</h2>
+          <h2 className="text-[#1D4ED8] text-3xl font-bold">SmartCommute</h2>
         </header>
 
-        <h1 className="text-4xl font-bold text-teal-700 mb-6">Change Password</h1>
+        <h1 className="text-4xl font-bold text-[#1D4ED8] mb-6">Change Password</h1>
 
         <main className="w-full">
           <label className="block text-gray-700 text-left mb-2 text-lg">Enter your Email</label>
@@ -82,14 +82,14 @@ const UpdatePasswordPage = () => {
           />
 
           <button
-            className="w-full bg-teal-500 text-white py-3 px-6 rounded-lg font-bold text-lg hover:bg-teal-600 transition mb-4 shadow-md hover:shadow-lg"
+            className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-3 px-6 rounded-lg font-bold text-lg hover:from-[#1E40AF] hover:to-[#2563EB] transition duration-300 mb-4 shadow-md hover:shadow-lg"
             onClick={handleSendClick}
           >
             Reset Password
           </button>
 
           <button
-            className="w-full bg-gray-300 text-teal-700 py-3 px-6 rounded-lg font-bold text-lg hover:bg-gray-400 transition"
+            className="w-full bg-gray-300 text-[#1D4ED8] py-3 px-6 rounded-lg font-bold text-lg hover:bg-gray-400 transition"
             onClick={() => navigate('/settings')}
           >
             Back to Settings

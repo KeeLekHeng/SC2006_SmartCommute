@@ -12,7 +12,6 @@ import Logo from './assets/logo1.png';
 
 const MainApp = () => {
   const location = useLocation();
-
   const initialAlert = location.state?.alert || { show: false, message: '', type: '' };
   const [alert, setAlert] = useState(initialAlert);
 
@@ -45,7 +44,8 @@ const MainApp = () => {
         </div>
       )}
 
-      <nav className="fixed h-24 top-0 left-0 right-0 bg-[#4169E1] text-white shadow-md z-40 transition-all duration-300 overflow-hidden"> {/* Royal Blue Header */}
+      {/* Header */}
+      <nav className="fixed h-24 top-0 left-0 right-0 bg-[#4169E1] text-white shadow-md z-40 transition-all duration-300"> {/* Royal Blue Header */}
         <div className="flex items-center justify-between h-full px-4">
           {/* Logo Section */}
           <div className="flex items-center">
@@ -54,7 +54,7 @@ const MainApp = () => {
           </div>
 
           {/* Navigation Links */}
-          <div className="flex space-x-8">
+          <div className="flex space-x-44">
             <div className="flex flex-col items-center">
               <img src={home} alt="Home" className="w-14 h-14" />
               <Link to="/main" className="hover:underline text-lg font-semibold transition duration-300 pb-2 text-white">
@@ -78,7 +78,7 @@ const MainApp = () => {
       </nav>
 
       {/* Main content container that stretches to fill the space */}
-      <div className="pt-24 pb-12 flex-1 flex">
+      <div className="pt-28 pb-12 flex-1 flex">
         <Routes>
           <Route path='/search' element={<SearchPage />} />
           <Route path='/' element={<SearchPage />} /> {/* Default route */}
@@ -88,13 +88,13 @@ const MainApp = () => {
         </Routes>
       </div>
 
+      {/* Footer */}
       <footer className="bg-[#4169E1] text-center text-lg text-white py-2 fixed bottom-0 w-full z-30"> {/* Royal Blue Footer */}
         <Link to="/review" className="hover:underline mb-1 text-white">
           <i className="material-icons text-yellow-500 mr-4">star</i>
           Leave us a review 
           <i className="material-icons text-yellow-500 ml-4">star</i>
         </Link>
-
         <span className="block mt-2 text-white"> www.smartcommutesg.com</span>
       </footer>
     </div>
