@@ -20,7 +20,8 @@ const SearchPage = () => {
   const [userLocation, setUserLocation] = useState(null);
   const [favorites, setFavorites] = useState([]);
   const [showFavoritesDropdown, setShowFavoritesDropdown] = useState({ start: false, destination: false });
-  
+  const [errors, setErrors] = useState({ startLocation: '', destination: '' });
+
   const [line, setLine] = useState(null); 
   const [startLocationMarkerPosition, setStartLocationMarkerPosition] = useState(null);
   const [destinationMarkerPosition, setDestinationMarkerPosition] = useState(null);
@@ -98,10 +99,20 @@ const SearchPage = () => {
   };
 
   const handleSearch = async () => { 
-    if (!startLocation || !destination) {
-      window.alert("Both Start Location and Destination fields must be filled!"); 
-      return; 
+    let validationErrors = {};
+    if (!startLocation) {
+      validationErrors.startLocation = 'Please fill in the starting location';
     }
+    if (!destination) {
+      validationErrors.destination = 'Please fill in the destination';
+    }
+    
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+
+    setErrors({}); // Clear previous errors if input is valid
 
     const sgTime = moment().tz('Asia/Singapore').format('YYYY-MM-DD HH:mm:ss');
     try { 
@@ -116,7 +127,7 @@ const SearchPage = () => {
       const errorMessage = error.response && error.response.data.error ? error.response.data.error : "Failed to save to database!";
       setAlert({ show: true, message: errorMessage, type: "error" }); 
     }
-  }
+  };
 
   const handleClear = (field) => {
     if (field === 'start') {
@@ -299,6 +310,7 @@ const SearchPage = () => {
                 />
               </StandaloneSearchBox>
             )}
+             {errors.startLocation && <p className="text-red-500 text-sm mt-1">{errors.startLocation}</p>}
             <button 
               onClick={() => handleClear('start')} 
               className="absolute right-3 top-1/2 transform bg-gray-300 text-sm text-gray-700 p-1 rounded-full hover:bg-gray-400"
@@ -332,7 +344,9 @@ const SearchPage = () => {
               <StandaloneSearchBox
                 onLoad={(ref) => (destinationRef.current = ref)}
                 onPlacesChanged={() => handleOnPlacesChanged('destination', destinationRef.current)}
-                options={{ componentRestrictions: { country: 'SG' }, strictBounds: true }}
+                options={{ 
+                  bounds: { north: 1.4784, south: 1.1484, east: 104.0945, west: 103.594, }, 
+                  componentRestrictions: { country: 'SG' }, strictBounds: true }}
               >
                 <input
                   type="text"
@@ -345,6 +359,7 @@ const SearchPage = () => {
                 />
               </StandaloneSearchBox>
             )}
+              {errors.destination && <p className="text-red-500 text-sm mt-1">{errors.destination}</p>}
             <button 
               onClick={() => handleClear('destination')} 
               className="absolute right-3 top-1/2 transform bg-gray-300 text-sm text-gray-700 p-1 rounded-full hover:bg-gray-400"
@@ -376,7 +391,7 @@ const SearchPage = () => {
         </div>
       </div>
     </div>
-  ); 
+  );
 };
 
 export default SearchPage;

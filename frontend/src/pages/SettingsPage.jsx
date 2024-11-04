@@ -34,7 +34,7 @@ const SettingsPage = () => {
         <div className="flex flex-col h-screen" style={{ backgroundColor: '#F3F4F6' }}>
             
             {/* Header */}
-            <nav className="fixed h-24 top-0 left-0 right-0 bg-[#6A5ACD] text-white shadow-md z-40 transition-all duration-300">
+            <nav className="fixed h-24 top-0 left-0 right-0 bg-[#4169E1] text-white shadow-md z-40 transition-all duration-300">
                 <div className="flex items-center justify-between h-full px-4">
                     <div className="flex items-center"> 
                         <img src={Logo} alt="Logo" className="w-18 h-14 mr-6" />
@@ -100,7 +100,7 @@ const SettingsPage = () => {
             )}
 
             {/* Footer */}
-            <footer className="bg-[#6A5ACD] text-center text-lg text-white py-2 fixed bottom-0 w-full z-30">
+            <footer className="bg-[#4169E1] text-center text-lg text-white py-2 fixed bottom-0 w-full z-30">
                 <Link to="/review" className="hover:underline mb-1 text-white">
                     <i className="material-icons text-yellow-500 mr-4">star</i>
                     Leave us a review 

@@ -115,18 +115,17 @@ const loginUser = async (req, res) => {
     }
 };
 
-// Change user password
 const changeUserPassword = async (req, res) => {
     const { username } = req.params;
     const { email, fruits, newPassword } = req.body;
 
     try {
-
         console.log('Received request to change password');
         console.log(`Username from params: ${username}`);
         console.log(`Email from body: ${email}`);
         console.log(`Fruits from body: ${fruits}`);
         console.log(`New password from body: ${newPassword}`);
+        
         // Normalize and trim inputs
         const lowerCaseEmail = email.trim().toLowerCase();
         const lowerCaseFruits = fruits.trim().toLowerCase();
@@ -134,26 +133,25 @@ const changeUserPassword = async (req, res) => {
         console.log(`Normalized fruits: ${lowerCaseFruits}`);
 
         console.log(`Finding user by username: ${username}`);
-        console.log(`Finding user by username: ${username}`);
         const user = await User.findOne({ username });
 
         if (!user) {
             return res.status(404).json({ error: 'User not found' });
         }
+
         console.log(`Stored user email: ${user.email}`);
         console.log(`Stored user fruits: ${user.fruits}`);
-        // Log stored user email for comparison
 
-        // Check if input details are the same as in the database
+        // Check if input details match the database
         if (user.email.trim().toLowerCase() !== lowerCaseEmail) {
             return res.status(401).json({ error: 'Wrong email entered' });
-        }
+        }  
         if (user.fruits.trim().toLowerCase() !== lowerCaseFruits) {
-            return res.status(401).json({ error: 'Wrong answer to the security question' });
+            return res.status(402).json({ error: 'Wrong answer to the security question' });
         }
 
-        // Update password without hashing
         user.password = newPassword;
+
         await user.save();
 
         res.status(200).json({ message: 'Password updated successfully' });
@@ -162,6 +160,7 @@ const changeUserPassword = async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 };
+
 
 const forgetPassword = async (req, res) => {
     const { email, fruits } = req.body;
@@ -184,7 +183,7 @@ const forgetPassword = async (req, res) => {
 
         const isMatchFruit = user.compareFruits(lowerCaseFruits);
         if (!isMatchFruit) {
-            return res.status(401).json({ error: 'Wrong answer to the security question' });
+            return res.status(402).json({ error: 'Wrong answer to the security question' });
         }
 
         // Reset the password

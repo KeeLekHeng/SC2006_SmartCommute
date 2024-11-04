@@ -25,7 +25,7 @@ const LandingPage = () => {
     };
 
     return (
-        <div className="bg-gradient-to-r from-teal-400 to-teal-600 flex items-center justify-center h-screen relative">
+        <div className="bg-[#4169E1] flex items-center justify-center h-screen relative">
             {/* Full-width Alert at the Top */}
             {alert.show && (
                 <div className="fixed top-0 left-0 right-0 z-50">
@@ -36,7 +36,7 @@ const LandingPage = () => {
             <div className="w-11/12 max-w-lg bg-white shadow-lg rounded-lg p-6 mx-4 flex flex-col items-center">
                 <header className="flex flex-col items-center mb-6">
                     <img src={logo} alt="logo" className="mb-4 h-40 -ml-0.5" />
-                    <h1 className="text-teal-700 text-4xl font-bold text-center">SmartCommute</h1>
+                    <h1 className="text-[#1D4ED8] text-4xl font-bold text-center">SmartCommute</h1>
                 </header>
 
                 <main className="w-full text-center mb-6">

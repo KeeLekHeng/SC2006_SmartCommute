@@ -14,6 +14,10 @@ const LoginPage = () => {
   const [alert, setAlert] = useState(initialAlert);
   const [usernameInput, setUsernameInput] = useState('');
   const [password, setPassword] = useState('');
+  const [errors, setErrors] = useState({
+    username: '',
+    password: '',
+  });
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -23,6 +27,8 @@ const LoginPage = () => {
     if (name === 'password') {
       setPassword(value);
     }
+
+    setErrors({ ...errors, [name]: '' }); // Clear specific error when input changes
   };
 
   const handleLoginClick = async () => {
@@ -39,11 +45,17 @@ const LoginPage = () => {
         });
       }
     } catch (error) {
-      const errorMessage =
-        error.response && error.response.data.error
-          ? error.response.data.error
-          : 'User Not Found, Please Try Again.';
-      setAlert({ show: true, message: errorMessage, type: 'error' });
+      const errorMessage = error.response && error.response.data.error
+        ? error.response.data.error
+        : 'User Not Found, Please Try Again.';
+
+      if (errorMessage.toLowerCase().includes('user not found')) {
+        setErrors({ ...errors, username: errorMessage });
+      } else if (errorMessage.toLowerCase().includes('invalid credentials')) {
+        setErrors({ ...errors, password: errorMessage });
+      } else {
+        setAlert({ show: true, message: errorMessage, type: 'error' });
+      }
     }
   };
 
@@ -87,7 +99,6 @@ const LoginPage = () => {
           >
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
-          
         </button>
 
         <header className="mb-6 text-center relative w-full flex flex-col items-center">
@@ -103,20 +114,22 @@ const LoginPage = () => {
             type="text"
             name="username"
             placeholder="Username"
-            className="w-full mb-4 p-3 border border-gray-300 rounded-lg shadow-sm"
+            className="w-full mb-2 p-3 border border-gray-300 rounded-lg shadow-sm"
             value={usernameInput}
             onChange={handleInputChange}
           />
+          {errors.username && <p className="text-red-500 text-sm mb-2">{errors.username}</p>}
 
           <label className="block text-gray-700 text-left mb-2 text-lg">Enter your Password</label>
           <input
             type="password"
             name="password"
             placeholder="Password"
-            className="w-full p-3 border border-gray-300 rounded-lg mb-2 shadow-sm"
+            className="w-full mb-2 p-3 border border-gray-300 rounded-lg shadow-sm"
             value={password}
             onChange={handleInputChange}
           />
+          {errors.password && <p className="text-red-500 text-sm mb-2">{errors.password}</p>}
 
           <div className="text-right mb-6">
             <button
