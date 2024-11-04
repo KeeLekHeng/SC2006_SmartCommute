@@ -122,7 +122,7 @@ const SearchPage = () => {
       if (response.status === 201) { 
         setAlert({ show: true, message: "Search saved to the database successfully!", type: "success" });
       }
-      navigate('/comparisons'); 
+      navigate('/comparisons', { state: { startLocation, destination } });  
     } catch (error) { 
       const errorMessage = error.response && error.response.data.error ? error.response.data.error : "Failed to save to database!";
       setAlert({ show: true, message: errorMessage, type: "error" }); 
