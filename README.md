@@ -39,3 +39,10 @@ To start using SmartCommute, follow these steps:
    ```bash
    git clone https://github.com/yourusername/SmartCommute.git
    cd SmartCommute
+
+2. **Install Dependencies**:
+3. ```bash
+   cd frontend
+   npm install
+   cd../backend
+   npm install
