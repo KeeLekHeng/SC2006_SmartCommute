@@ -1,4 +1,5 @@
 # SmartCommute
+![alt text](./applogo.gif)
 
 ## Mission Statement
 
@@ -36,14 +37,73 @@ To start using SmartCommute, follow these steps:
    cd ../backend
    npm install
 
-3. **Set Up Environment Variables**: Create a .env file in both frontend and backend.
-   **Frontend**
-   ```makefile
-   REACT_APP_GMAPSAPI=your_google_maps_api_key
-   
-   **Backend**
-   ```makefile
-   MONG_URI =your_mongodb_uri
-   
-   
-   
+3. **Set Up Environment Variables**: Create a `.env` file in both frontend and backend.
+
+    ```makefile
+   ## For frontend .env: 
+    REACT_APP_GMAPSAPI = your_google_maps_api_key
+    ```
+    ```makefile
+    ## For backend .env:
+    MONG_URI = your_mongodb_uri
+    ```
+
+4. **Run the Application**: Start both frontend and backend servers
+
+    ```bash
+    # Frontend
+    cd frontend
+    npm start
+    ```
+
+     ```bash
+    # Backend
+    cd backend
+    npm run dev
+    ```
+5. **Explore Features**:
+
+    - View optimal routes based on cost and time recommendation
+    - Save your favourite destinations
+    - Make better commuting choices with comprehensive information
+
+
+## Technologies Used  
+  <p>
+    <img src="https://img.shields.io/badge/nodejs-8b0000?style=for-the-badge&logo=node" />
+    <img src="https://img.shields.io/badge/javascript-096AB0?style=for-the-badge&logo=javascript" />
+    <img src="https://img.shields.io/badge/express-8b7700?style=for-the-badge&logo=express" />
+    <img src="https://img.shields.io/badge/python-096AB?style=for-the-badge&logo=python" />
+    <img src="https://img.shields.io/badge/mongodb-536AB0?style=for-the-badge&logo=mongodb" />
+    <img src="https://img.shields.io/badge/react-5b7700?style=for-the-badge&logo=react" />
+    <img src="https://img.shields.io/badge/npm-8096Af?style=for-the-badge&logo=npm" />
+    <img src="https://img.shields.io/badge/googlemaps-fbff80?style=for-the-badge&logo=googlemaps" />
+    <img src="https://img.shields.io/badge/html5-E34F26?style=for-the-badge&logo=html5&logoColor=white" />
+    <img src="https://img.shields.io/badge/css3-1572B6?style=for-the-badge&logo=css3&logoColor=white" />
+
+  </p>   
+
+## Contributing 
+We welcome contributions! Please follow these steps:
+
+1. Fork the repository.
+2. Create a new branch (`git checkout -b feature-branch`).
+3. Commit your changes (`git commit - m 'Add feature'`).
+4. Push to the branch (`git push origin feature-branch`).
+5. Create a Pull request.
+
+## Contributors
+- [@Priyarekah](https://github.com/priyarekah)
+
+- [@KeeLekHeng](https://github.com/KeeLekHeng)
+
+- [@jangasd](https://github.com/jangasd)
+
+- [@firkhannn](https://github.com/firkhannn)
+
+- [@lyk6666](https://github.com/lyk6666)
+
+- [@thuvathetuba](https://github.com/thuvathetuba)
+
+
+
