@@ -32,6 +32,7 @@ const FavoritesPage = () => {
     if (user) {
       fetchFavorites();
     }
+    window.scrollTo(0,0);
   }, [user]);
 
   const fetchFavorites = async () => {

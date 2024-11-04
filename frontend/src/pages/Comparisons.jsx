@@ -1,9 +1,13 @@
 import React, { useState, useCallback, useEffect } from "react";
-import { useLocation } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 import { GoogleMap, DirectionsService, DirectionsRenderer } from "@react-google-maps/api";
 import { getGrabFare, getGoTaxiFare, getGoCarFare, getGoCarXLFare, calculateBusFare, calculateMRTFare } from './fareCalculator';
 import grabLogo from '../assets/grabLogo.png';
 import goTaxiLogo from '../assets/goTaxi.png';
+import Logo from '../assets/logo1.png';
+import favouritesIcon from '../assets/fav.png';
+import settingsIcon from '../assets/setttings.png';
+import homeIcon from '../assets/home.png';
 
 const RouteOption = ({ route, startLocation, destination, onHover, onLeave }) => (
   <div
@@ -17,7 +21,7 @@ const RouteOption = ({ route, startLocation, destination, onHover, onLeave }) =>
     <div className="flex items-center space-x-2">
       {route.steps.map((step, i) => (
         <React.Fragment key={i}>
-           {step.travelMode === "Walk" ? (
+          {step.travelMode === "Walk" ? (
             <span className="text-xl">🚶‍♂️</span> 
           ) : step.travelMode === "Subway" ? (
             <span className="text-xl">🚇</span> 
@@ -233,86 +237,132 @@ const ComparisonPage = () => {
   });
 
   return (
-    <div className="p-4 flex flex-col md:flex-row items-start">
-      <div className="w-full md:w-1/2 flex flex-col items-center">
-        <h1 className="text-2xl font-semibold mb-4">Route Comparisons</h1>
-
-        <div className="flex space-x-4 mb-4">
-          <button className={`px-4 py-2 rounded ${sortOption === "price" ? "bg-blue-500 text-white" : "bg-gray-200"}`} onClick={() => setSortOption("price")}>
-            Price
-          </button>
-          <button className={`px-4 py-2 rounded ${sortOption === "time" ? "bg-blue-500 text-white" : "bg-gray-200"}`} onClick={() => setSortOption("time")}>
-            Time
-          </button>
+    <div className="relative min-h-screen flex flex-col">
+      {/* Header */}
+      <header className="fixed top-0 left-0 right-0 h-24 bg-[#4169E1] text-white z-50 flex items-center justify-between px-4 shadow-md">
+        <div className="flex items-center">
+          <img src={Logo} alt="Logo" className="w-18 h-14 mr-4" />
+          <span className="text-2xl font-bold">SmartCommute</span>
         </div>
+        <div className="flex space-x-44">
+          <div className="flex flex-col items-center">
+            <img src={homeIcon} alt="Home" className="w-14 h-14" />
+            <Link to="/main" className="hover:underline text-lg font-semibold transition pb-2 text-white">
+              Home
+            </Link>
+          </div>
+          <div className="flex flex-col items-center">
+            <img src={favouritesIcon} alt="Favourites" className="w-12 h-12 mb-2" />
+            <Link to="/favourites" className="hover:underline text-lg font-semibold transition pb-2 text-white">
+              Favourites
+            </Link>
+          </div>
+          <div className="flex flex-col items-center">
+            <img src={settingsIcon} alt="Settings" className="w-14 h-14" />
+            <Link to="/settings" className="hover:underline text-lg font-semibold transition pb-2 text-white">
+              Settings
+            </Link>
+          </div>
+        </div>
+      </header>
 
-        <div className="w-full max-w-lg space-y-4">
-          {combinedOptions.map((option, index) => (
-            option.type && (option.type.includes("Grab") || option.type.includes("Go")) ? (
-              <EHaulingOption
-                key={index}
-                type={option.type}
-                fare={option.fare}
-                duration={option.duration}
-                logo={option.logo}
-                onHover={() => handleHover(index, true)} // Pass true for e-hauling options
-                onLeave={() => handleHover(null, true)} // Clear when not hovered
-              />
-            ) : (
-              <RouteOption
-                key={index}
-                route={option}
-                startLocation={startLocation}
-                destination={destination}
-                onHover={() => handleHover(option.index, false)} // Pass false for public transport options
-                onLeave={() => handleHover(null, false)} // Clear when not hovered
-              />
-            )
-          ))}
+      {/* Main content */}
+      <div className="flex-1 p-4 mt-24 flex flex-col md:flex-row items-start">
+        {/* Google Map on the left */}
+        {startLocation && destination && (
+          <div className="w-1/2 h-full">
+            <GoogleMap
+              center={{ lat: 1.3483, lng: 103.6831 }}
+              zoom={14}
+              mapContainerStyle={{ width: "100%", height: "calc(100vh - 8rem)" }}
+            >
+              {!carRouteData && (
+                <DirectionsService
+                  options={{
+                    origin: startLocation,
+                    destination: destination,
+                    travelMode: "DRIVING",
+                  }}
+                  callback={handleCarCallback}
+                />
+              )}
+              {!directionsResponse && (
+                <DirectionsService
+                  options={{
+                    origin: startLocation,
+                    destination: destination,
+                    travelMode: "TRANSIT",
+                    provideRouteAlternatives: true,
+                  }}
+                  callback={directionsCallback}
+                />
+              )}
+              {ehailingOptionHovered && carRouteData && (
+                <DirectionsRenderer directions={carRouteData} />
+              )}
+              {!ehailingOptionHovered && hoveredRouteIndex !== null && directionsResponse && directionsResponse.routes[hoveredRouteIndex] && (
+                <DirectionsRenderer
+                  directions={{ ...directionsResponse, routes: [directionsResponse.routes[hoveredRouteIndex]] }}
+                />
+              )}
+            </GoogleMap>
+          </div>
+        )}
+
+        {/* Route options container on the right */}
+        <div className="pt-28 pb-24 flex-1 flex justify-center items-center px-4">
+          <div className="bg-white p-5 rounded-lg w-full max-w-3xl shadow-lg overflow-y-auto relative h-[70vh] -translate-y-10">
+            <div className="w-full md:w- flex flex-col items-center">
+              <h1 className="text-2xl font-semibold mb-4">Route Comparisons</h1>
+
+              <div className="flex space-x-4 mb-4">
+                <button className={`px-4 py-2 rounded ${sortOption === "price" ? "bg-blue-500 text-white" : "bg-gray-200"}`} onClick={() => setSortOption("price")}>
+                  Price
+                </button>
+                <button className={`px-4 py-2 rounded ${sortOption === "time" ? "bg-blue-500 text-white" : "bg-gray-200"}`} onClick={() => setSortOption("time")}>
+                  Time
+                </button>
+              </div>
+
+              <div className="w-full max-w-lg space-y-4">
+                {combinedOptions.map((option, index) => (
+                  option.type && (option.type.includes("Grab") || option.type.includes("Go")) ? (
+                    <EHaulingOption
+                      key={index}
+                      type={option.type}
+                      fare={option.fare}
+                      duration={option.duration}
+                      logo={option.logo}
+                      onHover={() => handleHover(index, true)} // Pass true for e-hauling options
+                      onLeave={() => handleHover(null, true)} // Clear when not hovered
+                    />
+                  ) : (
+                    <RouteOption
+                      key={index}
+                      route={option}
+                      startLocation={startLocation}
+                      destination={destination}
+                      onHover={() => handleHover(option.index, false)} // Pass false for public transport options
+                      onLeave={() => handleHover(null, false)} // Clear when not hovered
+                    />
+                  )
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
-      {startLocation && destination && (
-        <div className="w-full md:w-1/2">
-          <GoogleMap
-            center={{ lat: 1.3483, lng: 103.6831 }}
-            zoom={14}
-            mapContainerStyle={{ width: "100%", height: "400px" }}
-          >
-            {!carRouteData && (
-              <DirectionsService
-                options={{
-                  origin: startLocation,
-                  destination: destination,
-                  travelMode: "DRIVING",
-                }}
-                callback={handleCarCallback}
-              />
-            )}
-            {!directionsResponse && (
-              <DirectionsService
-                options={{
-                  origin: startLocation,
-                  destination: destination,
-                  travelMode: "TRANSIT",
-                  provideRouteAlternatives: true,
-                }}
-                callback={directionsCallback}
-              />
-            )}
-            {ehailingOptionHovered && carRouteData && (
-              <DirectionsRenderer directions={carRouteData} />
-            )}
-            {!ehailingOptionHovered && hoveredRouteIndex !== null && directionsResponse && directionsResponse.routes[hoveredRouteIndex] && (
-              <DirectionsRenderer
-                directions={{ ...directionsResponse, routes: [directionsResponse.routes[hoveredRouteIndex]] }}
-              />
-            )}
-          </GoogleMap>
-        </div>
-      )}
+      {/* Footer */}
+      <footer className="fixed bottom-0 left-0 right-0 h-16 bg-[#4169E1] text-white text-center flex items-center justify-center">
+        <Link to="/review" className="hover:underline text-lg text-white">
+          <i className="material-icons text-yellow-500 mr-4">star</i>
+          Leave us a review
+          <i className="material-icons text-yellow-500 ml-4">star</i>
+        </Link>
+      </footer>
     </div>
   );
-};  
+};
 
 export default ComparisonPage;
