@@ -16,26 +16,54 @@ const UpdatePasswordPage = () => {
   const [fruitError, setFruitError] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [alert, setAlert] = useState({ show: false, message: '', type: '' });
+  const [successAlert, setSuccessAlert] = useState({ show: false, message: '', type: 'success' });
+
+  // Password validation function
+  const validatePassword = (password) => {
+    if (password.length < 8 || password.length > 18) {
+      setPasswordError("Password must be between 8 to 18 characters long.");
+      return false;
+    } else if (!/[A-Za-z]/.test(password) || !/\d/.test(password)) {
+      setPasswordError("Password must contain both letters and numbers.");
+      return false;
+    } else if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+      setPasswordError("Password must contain at least one special character.");
+      return false;
+    }
+    return true;
+  };
 
   const handleSendClick = async () => {
     // Reset error messages
     setEmailError('');
     setFruitError('');
     setPasswordError('');
+    setAlert({ show: false, message: '', type: '' });
+    setSuccessAlert({ show: false, message: '', type: 'success' });
 
     let hasError = false;
 
+    // Email validation
     if (!email) {
       setEmailError('Please fill in the email field.');
       hasError = true;
+    } else if (!/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(email)) {
+      setEmailError("Invalid email format.");
+      hasError = true;
     }
+
+    // Security question validation
     if (!fruit) {
       setFruitError('Please fill in the favorite fruit field.');
       hasError = true;
     }
+
+    // Password validation (checked last)
     if (!newPassword) {
       setPasswordError('Please fill in the new password field.');
       hasError = true;
+    } else if (!validatePassword(newPassword)) {
+      hasError = true; // Password validation failed
     }
 
     if (hasError) {
@@ -51,28 +79,55 @@ const UpdatePasswordPage = () => {
       });
 
       if (response.status === 200) {
-        setAlert({ show: true, message: 'Password reset successfully!', type: 'success' });
+        setSuccessAlert({ show: true, message: 'Password reset successfully!', type: 'success' });
         setTimeout(() => {
+          setSuccessAlert({ show: false, message: '', type: 'success' });
           navigate('/settings');
         }, 2000);
       } else {
-        setAlert({ show: true, message: response.data.error , type: 'error' });
+        setAlert({ show: true, message: response.data.error, type: 'error' });
       }
     } catch (error) {
-      const errorMessage = error.response && error.response.data.error
-        ? error.response.data.error
-        : 'User Not Found, Please Try Again.';
-      setAlert({ show: true, message: errorMessage, type: 'error' });
+      if (error.response && error.response.data.error) {
+        const errorMessage = error.response.data.error;
+
+        if (errorMessage.toLowerCase().includes('email')) {
+          setEmailError(errorMessage);
+        } else if (errorMessage.toLowerCase().includes('security')) {
+          setFruitError('Wrong answer to the security question.');
+        } else {
+          setAlert({ show: true, message: 'An error occurred. Please try again.', type: 'error' });
+        }
+      } else {
+        setAlert({ show: true, message: 'User Not Found, Please Try Again.', type: 'error' });
+      }
     }
   };
 
   const closeAlert = () => setAlert({ ...alert, show: false });
+  const closeSuccessAlert = () => setSuccessAlert({ ...successAlert, show: false });
 
   return (
-    <div className="bg-[#4169E1] flex items-center justify-center h-screen overflow-hidden">
-      <div className="absolute top-0 left-0 right-0 p-4">
-        {alert.show && <Alert type={alert.type} message={alert.message} onClose={closeAlert} />}
-      </div>
+    <div className="bg-[#4169E1] flex items-center justify-center h-screen overflow-hidden relative">
+      {/* Success Alert */}
+      {successAlert.show && (
+        <div className="absolute top-0 left-0 right-0 w-full">
+          <div className="p-4 bg-green-200 text-green-800 text-center shadow-md flex justify-between items-center">
+            <span className="flex-1 font-semibold">{successAlert.message}</span>
+            <button onClick={closeSuccessAlert} className="text-lg font-bold px-4">&times;</button>
+          </div>
+        </div>
+      )}
+
+      {/* Error/General Alert */}
+      {alert.show && (
+        <div className="absolute top-0 left-0 right-0 w-full mt-16">
+          <div className={`p-4 text-center text-sm ${alert.type === 'success' ? 'text-green-800 bg-green-200' : 'text-red-800 bg-red-200'} shadow-md flex justify-between items-center`}>
+            <span className="flex-1">{alert.message}</span>
+            <button onClick={closeAlert} className="text-lg font-bold px-4">&times;</button>
+          </div>
+        </div>
+      )}
 
       <div className="w-11/12 max-w-md bg-white shadow-lg rounded-lg p-8 mx-4 flex flex-col items-center">
         <header className="mb-6 text-center">
