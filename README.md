@@ -96,15 +96,15 @@ We welcome contributions! Please follow these steps:
 5. Create a Pull request.
 
 ## Contributors
-- [@Priyarekah](https://github.com/priyarekah)
+- Priya ([@Priyarekah](https://github.com/priyarekah))
 
-- [@KeeLekHeng](https://github.com/KeeLekHeng)
+- Kee ([@KeeLekHeng](https://github.com/KeeLekHeng))
 
-- [@jangasd](https://github.com/jangasd)
+- James ([@jangasd](https://github.com/jangasd))
 
-- [@firkhannn](https://github.com/firkhannn)
+- Firdaus ([@firkhannn](https://github.com/firkhannn))
 
-- [@lyk6666](https://github.com/lyk6666)
+- Yi Kai ([@lyk6666](https://github.com/lyk6666))
 
-- [@thuvathetuba](https://github.com/thuvathetuba)
+- Thuva ([@thuvathetuba](https://github.com/thuvathetuba))
 
