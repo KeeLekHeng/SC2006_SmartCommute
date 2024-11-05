@@ -35,7 +35,9 @@ To start using SmartCommute, follow these steps:
    ```bash
    cd frontend
    npm install
+   pip install -r requirements.txt
    cd ../backend
+   pip install -r requirements.txt
    npm install
 
 3. **Set Up Environment Variables**: Create a `.env` file in both frontend and backend.
@@ -54,14 +56,12 @@ To start using SmartCommute, follow these steps:
     ```bash
     # Frontend
     cd frontend
-    pip install -r requirements.txt
     npm start
     ```
 
      ```bash
     # Backend
     cd backend
-    pip install -r requirements.txt
     npm run dev
     ```
 5. **Explore Features**:
