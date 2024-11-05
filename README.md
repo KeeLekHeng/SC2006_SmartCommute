@@ -54,12 +54,14 @@ To start using SmartCommute, follow these steps:
     ```bash
     # Frontend
     cd frontend
+    pip install -r requirements.txt
     npm start
     ```
 
      ```bash
     # Backend
     cd backend
+    pip install -r requirements.txt
     npm run dev
     ```
 5. **Explore Features**:
