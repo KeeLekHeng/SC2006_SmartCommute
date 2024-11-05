@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # SmartCommute
 ![alt text](./applogo.gif)
 
@@ -107,3 +108,5 @@ We welcome contributions! Please follow these steps:
 
 
 
+=======
+>>>>>>> Thuva
