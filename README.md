@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 # SmartCommute
 ![alt text](./applogo.gif)
 
@@ -35,7 +35,9 @@ To start using SmartCommute, follow these steps:
    ```bash
    cd frontend
    npm install
+   pip install -r requirements.txt
    cd ../backend
+   pip install -r requirements.txt
    npm install
 
 3. **Set Up Environment Variables**: Create a `.env` file in both frontend and backend.
@@ -106,7 +108,3 @@ We welcome contributions! Please follow these steps:
 
 - [@thuvathetuba](https://github.com/thuvathetuba)
 
-
-
-=======
->>>>>>> Thuva
