@@ -39,7 +39,7 @@ const MainApp = () => {
     <div className="w-full min-h-screen flex flex-col" style={{ backgroundColor: '#E8F0FA' }}> {/* Light Blue Gray Background */}
 
       {alert.show && (
-        <div className="absolute top-0 left-0 right-0 p-4 z-50">
+        <div className="fixed top-0 left-0 right-0 p-4 z-50">
           <Alert type={alert.type} message={alert.message} onClose={closeAlert} />
         </div>
       )}

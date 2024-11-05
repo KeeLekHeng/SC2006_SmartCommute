@@ -1,11 +1,13 @@
 // grabFareCalculator.js
-export const getGrabFare = (minutes, distance, isSixSeater = false) => {
+export const getGrabFare = (minutes, distance, isSixSeater = false, isPeakPeriod) => {
     const baseFare = isSixSeater ? 4.0 : 2.5;
-    const perKmRate = isSixSeater ? 0.83 : 0.5;
-    const perMinRate = isSixSeater ? 0.26 : 0.16;
-  
-    let totalFare = baseFare + (perKmRate * distance) + (perMinRate * minutes);
+    const perKmRate = isSixSeater ? 0.83 : 0.59;
+    const perMinRate = isSixSeater ? 0.3 : 0.2;
     
+    let totalFare = baseFare + (perKmRate * distance) + (perMinRate * minutes);
+    if (isPeakPeriod) {
+        totalFare *= 1.4;
+    };
     return {
       type: isSixSeater ? "Grab 6-Seater Economy" : "Grab 4-Seater Economy",
       fare: totalFare.toFixed(2),
@@ -24,6 +26,9 @@ export const getGrabFare = (minutes, distance, isSixSeater = false) => {
     } else {
       distanceFare = (10 * (0.25 * 1000 / 400)) + ((distanceInKm - 10) * (0.25 * 1000 / 350)); // S$0.25 per 350m after 10km
     }
+    if (isPeakPeriod) {
+        totalFare *= 1.4;
+    };
   
     const totalFare = flagdownFare + bookingFee + distanceFare + platformFee;
     return {
@@ -35,28 +40,34 @@ export const getGrabFare = (minutes, distance, isSixSeater = false) => {
 
 // grabFareCalculator.js
 
-export function getGoCarFare(distanceInKm) {
+export function getGoCarFare(distanceInKm, isPeakPeriod) {
     // Base fare estimation for GoCar 4-seater
     const baseFare = 1.5; // Starting fare for GoCar
-    const distanceFare = distanceInKm * 0.50; // $0.50 per km
+    const distanceFare = distanceInKm * 0.72; // $0.70 per km
     const platformFee = 0.80; // Average platform fee between $0.60 and $1.00
     const transactionFee = Math.min(0.60, Math.max(0.10, distanceInKm * 0.05)); // $0.10 to $0.60
   
     const totalFare = baseFare + distanceFare + platformFee + transactionFee;
+    if (isPeakPeriod) {
+        totalFare *= 1.4;
+    };
     return {
       fare: totalFare.toFixed(2),
       type: 'GoCar 4-seater',
     };
   }
   
-  export function getGoCarXLFare(distanceInKm) {
+  export function getGoCarXLFare(distanceInKm, isPeakPeriod) {
     // Base fare estimation for GoCar XL 6-seater (30-60% higher)
     const baseFare = 1.5 * 1.45; // 45% higher for XL
-    const distanceFare = distanceInKm * 0.50 * 1.45; // 45% higher per km
+    const distanceFare = distanceInKm * 0.80 * 1.52; // 45% higher per km
     const platformFee = 0.80; // Average platform fee between $0.60 and $1.00
     const transactionFee = Math.min(0.60, Math.max(0.10, distanceInKm * 0.05)); // $0.10 to $0.60
   
     const totalFare = baseFare + distanceFare + platformFee + transactionFee;
+    if (isPeakPeriod) {
+        totalFare *= 1.4;
+    };
     return {
       fare: totalFare.toFixed(2),
       type: 'GoCar XL 6-seater',

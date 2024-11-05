@@ -179,11 +179,11 @@ const ComparisonPage = () => {
       const durationInMinutes = leg.duration.value / 60;
       const distanceInKm = leg.distance.value / 1000;
 
-      const grab4Seater = getGrabFare(durationInMinutes, distanceInKm, false);
-      const grab6Seater = getGrabFare(durationInMinutes, distanceInKm, true);
+      const grab4Seater = getGrabFare(durationInMinutes, distanceInKm, false, isPeakPeriod());
+      const grab6Seater = getGrabFare(durationInMinutes, distanceInKm, true, isPeakPeriod());
       const goTaxi = getGoTaxiFare(durationInMinutes, distanceInKm, isPeakPeriod());
-      const goCar = getGoCarFare(distanceInKm);
-      const goCarXL = getGoCarXLFare(distanceInKm);
+      const goCar = getGoCarFare(distanceInKm, isPeakPeriod());
+      const goCarXL = getGoCarXLFare(distanceInKm, isPeakPeriod());
 
       setEHailingOptions([
         { ...grab4Seater, duration: durationInMinutes, type: "Grab 4-seater", logo: grabLogo },

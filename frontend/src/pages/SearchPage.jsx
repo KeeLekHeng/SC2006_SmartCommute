@@ -68,6 +68,7 @@ const SearchPage = () => {
         }
       );
     }
+    window.scrollTo(0, document.body.scrollHeight);
   }, []);
 
   const drawLineBetweenMarkers = (start, destination) => {
@@ -146,11 +147,38 @@ const SearchPage = () => {
     }
   };
 
+  const isSingapore = (address) => { 
+    if (!address) return false; 
+    const formattedAddress = address.trim().toLowerCase(); 
+    // Check if "singapore" appears anywhere in the address 
+    return formattedAddress.includes("singapore"); 
+  };
+
   const handleOnPlacesChanged = (inputType, ref) => {
     const places = ref.getPlaces();
     if (places && places.length > 0) {
       const place = places[0];
       if (place.geometry && place.geometry.location) {
+        const newErrors = { ...errors }; // Copy current errors to modify them 
+ 
+        // Check if the selected location is not in Singapore and set the appropriate error 
+        if (!isSingapore(place.formatted_address)) { 
+          if (inputType === 'start') { 
+            newErrors.startLocation = "Pick a valid starting location in Singapore."; 
+          } else if (inputType === 'destination') { 
+            newErrors.destination = "Pick a valid destination in Singapore."; 
+          } 
+          setErrors(newErrors);  
+          return;  
+        } 
+   
+        // Clear any existing error for the current input type if the location is valid 
+        if (inputType === 'start') { 
+          delete newErrors.startLocation; 
+        } else if (inputType === 'destination') { 
+          delete newErrors.destination; 
+        } 
+        setErrors(newErrors);
         const location = place.geometry.location;
 
         const newMarker = {
