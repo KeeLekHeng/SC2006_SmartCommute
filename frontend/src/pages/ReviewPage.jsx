@@ -18,17 +18,17 @@ const Review = ({ review, onToggleUpvote }) => {
   const avatar = review.gender === 'female' ? avatars.female : avatars.male;
 
   return (
-    <div className="bg-gray-100 p-4 border border-gray-300 rounded mb-4 text-left relative">
-      <div className="flex items-center mb-2">
-        <img src={avatar} alt="avatar" className="w-10 h-10 rounded-full mr-2" />
-        <p className="font-bold">{review.username}</p>
+    <div className={styles.reviewContainer}>
+      <div className={styles.reviewHeader}>
+        <img src={avatar} alt="avatar" className={styles.avatar} />
+        <p className={styles.reviewUsername}>{review.username}</p>
       </div>
       <p>{review.review}</p>
-      <div className="flex justify-between items-center mt-2">
+      <div className={styles.reviewFooter}>
         <small>{new Date(review.date).toLocaleString()}</small>
         <button
           onClick={() => onToggleUpvote(review)}
-          className={`p-2 rounded ${review.hasUpvoted ? "bg-green-500 text-white" : "bg-gray-100 text-black"} absolute right-2 top-1/2 transform -translate-y-1/2`}
+          className={`${styles.upvoteButton} ${review.hasUpvoted ? styles.upvoted : styles.notUpvoted}`}
         >
           Upvote ({review.upvotes})
         </button>
@@ -126,100 +126,85 @@ const ReviewPage = () => {
   };
 
   return (
-    <div className="flex flex-col h-screen" style={{ backgroundColor: '#E8F0FA' }}>
+    <div className={styles.container}>
       
       {/* Header */}
-      <nav className="fixed h-24 top-0 left-0 right-0 bg-[#4169E1] text-white shadow-md z-40 transition-all duration-300">
-        <div className="flex items-center justify-between h-full px-4">
+      <nav className={styles.header}>
+        <div className={styles.headerContent}>
           <div className="flex items-center">
-            <img src={Logo} alt="Logo" className="w-18 h-14 mr-6" />
+            <img src={Logo} alt="Logo" className={styles.logo} />
             <span className="text-2xl font-bold">SmartCommute</span>
           </div>
 
-          <div className="flex space-x-44">
-            <div className="flex flex-col items-center">
-              <img src={home} alt="Home" className="w-14 h-14" />
-              <Link to="/main" className="hover:underline text-lg font-semibold transition duration-300 pb-2 text-white">
-                Home
-              </Link>
+          <div className={styles.navLinks}>
+            <div className={styles.navItem}>
+              <img src={home} alt="Home" className={styles.navIcon} />
+              <Link to="/main" className={styles.link}>Home</Link>
             </div>
-            <div className="flex flex-col items-center">
-              <img src={favourites} alt="Favourites" className="w-12 h-12 mb-2" />
-              <Link to="/favourites" className="hover:underline text-lg font-semibold transition duration-300 pb-2 text-white">
-                Favourites
-              </Link>
+            <div className={styles.navItem}>
+              <img src={favourites} alt="Favourites" className={styles.navIconSmall} />
+              <Link to="/favourites" className={styles.link}>Favourites</Link>
             </div>
-            <div className="flex flex-col items-center">
-              <img src={settings} alt="Settings" className="w-14 h-14" />
-              <Link to="/settings" className="hover:underline text-lg font-semibold transition duration-300 pb-2 text-white">
-                Settings
-              </Link>
+            <div className={styles.navItem}>
+              <img src={settings} alt="Settings" className={styles.navIcon} />
+              <Link to="/settings" className={styles.link}>Settings</Link>
             </div>
           </div>
         </div>
       </nav>
 
       {/* Content Section */}
-      <div className="pt-28 pb-24 flex-1 flex justify-center items-center px-4">
-        <div className="bg-white p-5 rounded-lg w-full max-w-3xl shadow-lg overflow-y-auto relative h-[70vh]"> {/* Reduced height */}
+      <div className={styles.content}>
+        <div className={styles.card}>
           
           {/* Back Button */}
-          <button
-            onClick={() => navigate(-1)}
-            className="absolute top-4 left-4 flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded-full shadow hover:bg-gray-300 transition duration-200"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-4 w-4 mr-2"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
+          <button onClick={() => navigate(-1)} className={styles.backButton}>
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
             Back
           </button>
 
-          <h1 className="font-bold text-center mb-4 text-lg text-gray-700">Leave a Review</h1>
-          <div className="mb-4">
+          <h1 className={styles.title}>Leave a Review</h1>
+          <div className={styles.reviewInputContainer}>
             <textarea
               value={newReview}
               onChange={(e) => setNewReview(e.target.value)}
               placeholder="Write your review here..."
               rows="4"
-              className="w-full p-2 border border-gray-300 rounded mb-2"
+              className={styles.reviewTextarea}
             />
-            <button onClick={handleSubmitReview} className="p-2 bg-gradient-to-r from-blue-500 to-blue-700 text-white rounded w-full hover:from-blue-600 hover:to-blue-800 transition duration-300 shadow-md">
+            <button onClick={handleSubmitReview} className={styles.submitButton}>
               Submit Review
             </button>
           </div>
 
-          <div className="mb-4 flex justify-around">
-            <button onClick={() => setFilter('mostRecent')} className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition duration-300">
+          <div className={styles.filterButtons}>
+            <button onClick={() => setFilter('mostRecent')} className={styles.filterButton}>
               Most Recent
             </button>
-            <button onClick={() => setFilter('mostPopular')} className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition duration-300">
+            <button onClick={() => setFilter('mostPopular')} className={styles.filterButton}>
               Most Popular
             </button>
           </div>
 
           <div>
-            <h2 className="font-bold mb-2 text-gray-700">Reviews</h2>
+            <h2 className={styles.reviewsTitle}>Reviews</h2>
             {currentReviews.length > 0 ? (
               currentReviews.map((review) => (
                 <Review key={`${review.username}-${review.review}`} review={review} onToggleUpvote={handleToggleUpvote} />
               ))
             ) : (
-              <p className="text-center text-gray-500">No reviews yet. Be the first to leave one!</p>
+              <p className={styles.noReviewsText}>No reviews yet. Be the first to leave one!</p>
             )}
           </div>
 
-          <div className="mt-4 flex justify-between items-center">
-            <button onClick={handlePreviousPage} disabled={currentPage === 1} className="p-2 bg-gray-300 rounded">
+          <div className={styles.pagination}>
+            <button onClick={handlePreviousPage} disabled={currentPage === 1} className={styles.pageButton}>
               Previous
             </button>
-            <span className="text-gray-700">Page {currentPage} of {totalPages}</span>
-            <button onClick={handleNextPage} disabled={currentPage === totalPages || totalPages === 0} className="p-2 bg-gray-300 rounded">
+            <span className={styles.pageText}>Page {currentPage} of {totalPages}</span>
+            <button onClick={handleNextPage} disabled={currentPage === totalPages || totalPages === 0} className={styles.pageButton}>
               Next
             </button>
           </div>
@@ -227,16 +212,53 @@ const ReviewPage = () => {
       </div>
 
       {/* Footer */}
-      <footer className="bg-[#4169E1] text-center text-lg text-white py-2 fixed bottom-0 w-full z-30">
-        <Link to="/review" className="hover:underline mb-1 text-white">
+      <footer className={styles.footer}>
+        <Link to="/review" className={styles.footerLink}>
           <i className="material-icons text-yellow-500 mr-4">star</i>
           Leave us a review 
           <i className="material-icons text-yellow-500 ml-4">star</i>
         </Link>
-        <span className="block mt-2 text-white"> www.smartcommutesg.com</span>
+        <span className={styles.footerText}> www.smartcommutesg.com</span>
       </footer>
     </div>
   );
+};
+
+const styles = {
+  container: "flex flex-col h-screen bg-[#E8F0FA]",
+  header: "fixed h-24 top-0 left-0 right-0 bg-[#4169E1] text-white shadow-md z-40 transition-all duration-300",
+  headerContent: "flex items-center justify-between h-full px-4",
+  logo: "w-18 h-14 mr-6",
+  navLinks: "flex space-x-44",
+  navItem: "flex flex-col items-center",
+  link: "hover:underline text-lg font-semibold transition duration-300 pb-2 text-white",
+  navIcon: "w-14 h-14",
+  navIconSmall: "w-12 h-12 mb-2",
+  content: "pt-28 pb-24 flex-1 flex justify-center items-center px-4",
+  card: "bg-white p-5 rounded-lg w-full max-w-3xl shadow-lg overflow-y-auto relative h-[70vh]",
+  backButton: "absolute top-4 left-4 flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded-full shadow hover:bg-gray-300 transition duration-200",
+  title: "font-bold text-center mb-4 text-lg text-gray-700",
+  reviewInputContainer: "mb-4",
+  reviewTextarea: "w-full p-2 border border-gray-300 rounded mb-2",
+  submitButton: "p-2 bg-gradient-to-r from-blue-500 to-blue-700 text-white rounded w-full hover:from-blue-600 hover:to-blue-800 transition duration-300 shadow-md",
+  filterButtons: "mb-4 flex justify-around",
+  filterButton: "p-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition duration-300",
+  reviewsTitle: "font-bold mb-2 text-gray-700",
+  noReviewsText: "text-center text-gray-500",
+  pagination: "mt-4 flex justify-between items-center",
+  pageButton: "p-2 bg-gray-300 rounded",
+  pageText: "text-gray-700",
+  footer: "bg-[#4169E1] text-center text-lg text-white py-2 fixed bottom-0 w-full z-30",
+  footerLink: "hover:underline mb-1 text-white",
+  footerText: "block mt-2 text-white",
+  reviewContainer: "bg-gray-100 p-4 border border-gray-300 rounded mb-4 text-left relative",
+  reviewHeader: "flex items-center mb-2",
+  avatar: "w-10 h-10 rounded-full mr-2",
+  reviewUsername: "font-bold",
+  reviewFooter: "flex justify-between items-center mt-2",
+  upvoteButton: "p-2 rounded absolute right-2 top-1/2 transform -translate-y-1/2",
+  upvoted: "bg-green-500 text-white",
+  notUpvoted: "bg-gray-100 text-black",
 };
 
 export default ReviewPage;

@@ -7,7 +7,7 @@ import Alert from '../components/Alert';
 const UpdatePasswordPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const username = location.state?.username || ''; // Get username from location state
+  const username = location.state?.username || '';
 
   const [email, setEmail] = useState('');
   const [fruit, setFruit] = useState('');
@@ -18,7 +18,6 @@ const UpdatePasswordPage = () => {
   const [alert, setAlert] = useState({ show: false, message: '', type: '' });
   const [successAlert, setSuccessAlert] = useState({ show: false, message: '', type: 'success' });
 
-  // Password validation function
   const validatePassword = (password) => {
     if (password.length < 8 || password.length > 18) {
       setPasswordError("Password must be between 8 to 18 characters long.");
@@ -34,7 +33,6 @@ const UpdatePasswordPage = () => {
   };
 
   const handleSendClick = async () => {
-    // Reset error messages
     setEmailError('');
     setFruitError('');
     setPasswordError('');
@@ -43,7 +41,6 @@ const UpdatePasswordPage = () => {
 
     let hasError = false;
 
-    // Email validation
     if (!email) {
       setEmailError('Please fill in the email field.');
       hasError = true;
@@ -52,26 +49,21 @@ const UpdatePasswordPage = () => {
       hasError = true;
     }
 
-    // Security question validation
     if (!fruit) {
       setFruitError('Please fill in the favorite fruit field.');
       hasError = true;
     }
 
-    // Password validation (checked last)
     if (!newPassword) {
       setPasswordError('Please fill in the new password field.');
       hasError = true;
     } else if (!validatePassword(newPassword)) {
-      hasError = true; // Password validation failed
+      hasError = true;
     }
 
-    if (hasError) {
-      return;
-    }
+    if (hasError) return;
 
     try {
-      console.log(username);
       const response = await axios.put(`http://localhost:4000/authRoutes/change-password/${username}`, {
         email,
         fruits: fruit,
@@ -88,19 +80,10 @@ const UpdatePasswordPage = () => {
         setAlert({ show: true, message: response.data.error, type: 'error' });
       }
     } catch (error) {
-      if (error.response && error.response.data.error) {
-        const errorMessage = error.response.data.error;
-
-        if (errorMessage.toLowerCase().includes('email')) {
-          setEmailError(errorMessage);
-        } else if (errorMessage.toLowerCase().includes('security')) {
-          setFruitError('Wrong answer to the security question.');
-        } else {
-          setAlert({ show: true, message: 'An error occurred. Please try again.', type: 'error' });
-        }
-      } else {
-        setAlert({ show: true, message: 'User Not Found, Please Try Again.', type: 'error' });
-      }
+      const errorMessage = error.response?.data.error || 'User Not Found, Please Try Again.';
+      if (errorMessage.toLowerCase().includes('email')) setEmailError(errorMessage);
+      else if (errorMessage.toLowerCase().includes('security')) setFruitError('Wrong answer to the security question.');
+      else setAlert({ show: true, message: 'An error occurred. Please try again.', type: 'error' });
     }
   };
 
@@ -108,83 +91,73 @@ const UpdatePasswordPage = () => {
   const closeSuccessAlert = () => setSuccessAlert({ ...successAlert, show: false });
 
   return (
-    <div className="bg-[#4169E1] flex items-center justify-center h-screen overflow-hidden relative">
-      {/* Success Alert */}
+    <div className={styles.container}>
       {successAlert.show && (
-        <div className="absolute top-0 left-0 right-0 w-full">
-          <div className="p-4 bg-green-200 text-green-800 text-center shadow-md flex justify-between items-center">
-            <span className="flex-1 font-semibold">{successAlert.message}</span>
-            <button onClick={closeSuccessAlert} className="text-lg font-bold px-4">&times;</button>
+        <div className={styles.alert}>
+          <div className={`${styles.alertContent} bg-green-200 text-green-800`}>
+            <span className={styles.alertMessage}>{successAlert.message}</span>
+            <button onClick={closeSuccessAlert} className={styles.alertClose}>&times;</button>
           </div>
         </div>
       )}
 
-      {/* Error/General Alert */}
       {alert.show && (
-        <div className="absolute top-0 left-0 right-0 w-full mt-16">
-          <div className={`p-4 text-center text-sm ${alert.type === 'success' ? 'text-green-800 bg-green-200' : 'text-red-800 bg-red-200'} shadow-md flex justify-between items-center`}>
-            <span className="flex-1">{alert.message}</span>
-            <button onClick={closeAlert} className="text-lg font-bold px-4">&times;</button>
+        <div className={styles.alert}>
+          <div className={`${styles.alertContent} ${alert.type === 'success' ? 'bg-green-200 text-green-800' : 'bg-red-200 text-red-800'}`}>
+            <span className={styles.alertMessage}>{alert.message}</span>
+            <button onClick={closeAlert} className={styles.alertClose}>&times;</button>
           </div>
         </div>
       )}
 
-      <div className="w-11/12 max-w-md bg-white shadow-lg rounded-lg p-8 mx-4 flex flex-col items-center">
-        <header className="mb-6 text-center">
-          <img src={Logo} alt="logo" className="mb-4 h-40" />
-          <h2 className="text-[#1D4ED8] text-3xl font-bold">SmartCommute</h2>
+      <div className={styles.formCard}>
+        <header className={styles.header}>
+          <img src={Logo} alt="logo" className={styles.logo} />
+          <h2 className={styles.logoText}>SmartCommute</h2>
         </header>
 
-        <h1 className="text-4xl font-bold text-[#1D4ED8] mb-6">Change Password</h1>
+        <h1 className={styles.title}>Change Password</h1>
 
-        <main className="w-full">
-          <label className="block text-gray-700 text-left mb-2 text-lg">Enter your Email</label>
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full mb-1 p-3 border border-gray-300 rounded-lg"
-          />
-          {emailError && <p className="text-red-500 text-sm mb-4">{emailError}</p>}
+        <main className={styles.form}>
+          <label className={styles.label}>Enter your Email</label>
+          <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} className={styles.input} />
+          {emailError && <p className={styles.error}>{emailError}</p>}
 
-          <label className="block text-gray-700 text-left mb-2 text-lg">What is your favorite fruit?</label>
-          <input
-            type="text"
-            placeholder="Favorite Fruit"
-            value={fruit}
-            onChange={(e) => setFruit(e.target.value)}
-            className="w-full mb-1 p-3 border border-gray-300 rounded-lg"
-          />
-          {fruitError && <p className="text-red-500 text-sm mb-4">{fruitError}</p>}
+          <label className={styles.label}>What is your favorite fruit?</label>
+          <input type="text" placeholder="Favorite Fruit" value={fruit} onChange={(e) => setFruit(e.target.value)} className={styles.input} />
+          {fruitError && <p className={styles.error}>{fruitError}</p>}
 
-          <label className="block text-gray-700 text-left mb-2 text-lg">New Password</label>
-          <input
-            type="password"
-            placeholder="New Password"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-            className="w-full mb-1 p-3 border border-gray-300 rounded-lg"
-          />
-          {passwordError && <p className="text-red-500 text-sm mb-6">{passwordError}</p>}
+          <label className={styles.label}>New Password</label>
+          <input type="password" placeholder="New Password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} className={styles.input} />
+          {passwordError && <p className={styles.error}>{passwordError}</p>}
 
-          <button
-            className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-3 px-6 rounded-lg font-bold text-lg hover:from-[#1E40AF] hover:to-[#2563EB] transition duration-300 mb-4 shadow-md hover:shadow-lg"
-            onClick={handleSendClick}
-          >
-            Reset Password
-          </button>
+          <button className={`${styles.button} ${styles.buttonPrimary}`} onClick={handleSendClick}>Reset Password</button>
 
-          <button
-            className="w-full bg-gray-300 text-[#1D4ED8] py-3 px-6 rounded-lg font-bold text-lg hover:bg-gray-400 transition"
-            onClick={() => navigate('/settings')}
-          >
-            Back to Settings
-          </button>
+          <button className={`${styles.button} ${styles.buttonSecondary}`} onClick={() => navigate('/settings')}>Back to Settings</button>
         </main>
       </div>
     </div>
   );
+};
+
+const styles = {
+  container: "bg-[#4169E1] flex items-center justify-center h-screen overflow-hidden relative",
+  alert: "absolute top-0 left-0 right-0 w-full",
+  alertContent: "p-4 text-center shadow-md flex justify-between items-center",
+  alertMessage: "flex-1 font-semibold",
+  alertClose: "text-lg font-bold px-4",
+  formCard: "w-11/12 max-w-md bg-white shadow-lg rounded-lg p-8 mx-4 flex flex-col items-center",
+  header: "mb-6 text-center",
+  logo: "mb-4 h-40",
+  logoText: "text-[#1D4ED8] text-3xl font-bold",
+  title: "text-4xl font-bold text-[#1D4ED8] mb-6",
+  form: "w-full",
+  label: "block text-gray-700 text-left mb-2 text-lg",
+  input: "w-full mb-1 p-3 border border-gray-300 rounded-lg",
+  error: "text-red-500 text-sm mb-4",
+  button: "w-full py-3 px-6 rounded-lg font-bold text-lg transition duration-300 shadow-md hover:shadow-lg",
+  buttonPrimary: "bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:from-[#1E40AF] hover:to-[#2563EB] mb-4",
+  buttonSecondary: "bg-gray-300 text-[#1D4ED8] hover:bg-gray-400",
 };
 
 export default UpdatePasswordPage;

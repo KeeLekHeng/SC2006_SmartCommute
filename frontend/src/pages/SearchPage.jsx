@@ -85,9 +85,9 @@ const SearchPage = () => {
     const newLine = new window.google.maps.Polyline({
       path: path,
       geodesic: true,
-      strokeColor: '#FF0000',
-      strokeOpacity: 1.0,
-      strokeWeight: 2,
+      strokeColor: '#FF5733',
+      strokeOpacity: 0.8,
+      strokeWeight: 4,
     });
 
     newLine.setMap(map);
@@ -287,7 +287,7 @@ const SearchPage = () => {
   };
 
   return (
-    <div className="flex w-full h-[calc(100vh-8rem)] overflow-hidden pt-4">
+    <div className="flex w-full h-[calc(100vh-8rem)] overflow-hidden pt-4 bg-gray-50">
       {alert.show && (
         <div className="absolute top-0 left-0 right-0 p-4 z-40">
           <Alert type={alert.type} message={alert.message} onClose={() => setAlert({ ...alert, show: false })} />
@@ -307,18 +307,18 @@ const SearchPage = () => {
             ))}
           </GoogleMap>
         ) : (
-          <div>Loading....</div>
+          <div className="flex items-center justify-center h-full text-gray-500">Loading Map...</div>
         )}
       </div>
   
-      <div className="w-1/4 h-full flex items-center justify-center p-4">
+      <div className="w-1/4 h-full flex items-center justify-center p-4 bg-white shadow-lg rounded-lg border-l-4 border-blue-500">
         <div className="w-3/4 max-w-md max-h-full overflow-visible flex flex-col justify-start relative">
-          <button onClick={handleUseCurrentLocation} className="mb-4 bg-green-300 p-2 rounded-md font-semibold hover:bg-[#4CAF50] transition shadow-lg">
+          <button onClick={handleUseCurrentLocation} className="mb-4 bg-green-300 p-2 rounded-md font-semibold hover:bg-green-500 text-white transition shadow-lg w-full">
             Use Current Location
           </button>
   
           <div className="w-full mb-4 relative">
-            <label htmlFor="startLocation" className="block text-gray-700 text-lg font-medium mb-2">
+            <label htmlFor="startLocation" className="block text-gray-700 text-lg font-semibold mb-2">
               Starting Location
             </label>
             {isLoaded && (
@@ -330,7 +330,7 @@ const SearchPage = () => {
                 <input
                   type="text"
                   placeholder="Enter starting location"
-                  className="w-full p-3 border border-gray-300 rounded-lg shadow-sm"
+                  className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   value={startLocation}
                   onChange={(e) => handleChange(e, 'start')}
                   onFocus={() => handleFocus('start')}
@@ -365,7 +365,7 @@ const SearchPage = () => {
           </div>
   
           <div className="w-full mb-4 relative">
-            <label htmlFor="destination" className="block text-gray-700 text-lg font-medium mb-2">
+            <label htmlFor="destination" className="block text-gray-700 text-lg font-semibold mb-2">
               Destination
             </label>
             {isLoaded && (
@@ -379,7 +379,7 @@ const SearchPage = () => {
                 <input
                   type="text"
                   placeholder="Enter destination"
-                  className="w-full p-3 border border-gray-300 rounded-lg shadow-sm"
+                  className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   value={destination}
                   onChange={(e) => handleChange(e, 'destination')}
                   onFocus={() => handleFocus('destination')}
@@ -413,7 +413,7 @@ const SearchPage = () => {
             )}
           </div>
   
-          <button onClick={handleSearch} className="w-full bg-blue-500 text-white p-3 rounded-lg font-medium hover:bg-blue-600 transition duration-200">
+          <button onClick={handleSearch} className="w-full bg-blue-500 text-white p-3 rounded-lg font-semibold hover:bg-blue-600 transition duration-200 shadow-lg">
             Search
           </button>
         </div>
@@ -423,3 +423,4 @@ const SearchPage = () => {
 };
 
 export default SearchPage;
+    

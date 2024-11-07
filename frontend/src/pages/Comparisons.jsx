@@ -16,7 +16,7 @@ const RouteOption = ({ route, startLocation, destination, onHover, onLeave }) =>
     onClick={() =>
       window.open(`https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(startLocation)}&destination=${encodeURIComponent(destination)}&travelmode=transit`)
     }
-    className="flex items-center justify-between p-4 border rounded-lg shadow-md hover:bg-gray-100 cursor-pointer"
+    className={styles.routeOption}
   >
     <div className="flex items-center space-x-2">
       {route.steps.map((step, i) => (
@@ -71,10 +71,10 @@ const EHaulingOption = ({ type, fare, duration, onHover, onLeave, logo }) => (
         }
       }
     }}
-    className="flex items-center justify-between p-4 border rounded-lg shadow-md hover:bg-gray-100 cursor-pointer"
+    className={styles.ehaulingOption}
   >
     <div className="flex items-center space-x-2">
-      <img src={logo} alt={type} className="w-20 h-12" />
+      <img src={logo} alt={type} className={styles.ehaulingLogo} />
       <span className="text-lg font-semibold">{type}</span>
     </div>
     <div className="flex flex-col items-end">
@@ -92,7 +92,6 @@ const ComparisonPage = () => {
   const [ehailingOptionHovered, setEHailingOptionHovered] = useState(false);
   const [ehailingOptions, setEHailingOptions] = useState([]);
   const [carRouteData, setCarRouteData] = useState(null);
-
   const [directionsFetched, setDirectionsFetched] = useState(false);
 
   const location = useLocation();
@@ -136,17 +135,16 @@ const ComparisonPage = () => {
             }
           }
   
-          // Calculate fare based on travel mode
           let fare = 0;
-          const distanceKm = step.distance.value / 1000; // Convert distance to kilometers
-          const randomFactor = Math.random() * 0.1 - 0.05; // Random factor in the range [-0.05, 0.05]
-  
+          const distanceKm = step.distance.value / 1000;
+          const randomFactor = Math.random() * 0.1 - 0.05;
+
           if (travelMode === "Walk") {
             fare = 0;
           } else if (travelMode === "Bus") {
-            fare = calculateBusFare(distanceKm) / 2 + randomFactor; // Bus fare divided by 2 and adjusted by random factor
+            fare = calculateBusFare(distanceKm) / 2 + randomFactor;
           } else if (travelMode === "Subway") {
-            fare = calculateMRTFare(distanceKm) + randomFactor; // Subway fare adjusted by random factor
+            fare = calculateMRTFare(distanceKm) + randomFactor;
           }
           totalFare += fare;
   
@@ -237,40 +235,31 @@ const ComparisonPage = () => {
   });
 
   return (
-    <div className="relative min-h-screen flex flex-col">
-      {/* Header */}
-      <header className="fixed top-0 left-0 right-0 h-24 bg-[#4169E1] text-white z-50 flex items-center justify-between px-4 shadow-md">
+    <div className={styles.container}>
+      <header className={styles.header}>
         <div className="flex items-center">
-          <img src={Logo} alt="Logo" className="w-18 h-14 mr-4" />
+          <img src={Logo} alt="Logo" className={styles.logo} />
           <span className="text-2xl font-bold">SmartCommute</span>
         </div>
         <div className="flex space-x-44">
           <div className="flex flex-col items-center">
-            <img src={homeIcon} alt="Home" className="w-14 h-14" />
-            <Link to="/main" className="hover:underline text-lg font-semibold transition pb-2 text-white">
-              Home
-            </Link>
+            <img src={homeIcon} alt="Home" className={styles.navIcon} />
+            <Link to="/main" className={styles.navLink}>Home</Link>
           </div>
           <div className="flex flex-col items-center">
-            <img src={favouritesIcon} alt="Favourites" className="w-12 h-12 mb-2" />
-            <Link to="/favourites" className="hover:underline text-lg font-semibold transition pb-2 text-white">
-              Favourites
-            </Link>
+            <img src={favouritesIcon} alt="Favourites" className={styles.navIcon} />
+            <Link to="/favourites" className={styles.navLink}>Favourites</Link>
           </div>
           <div className="flex flex-col items-center">
-            <img src={settingsIcon} alt="Settings" className="w-14 h-14" />
-            <Link to="/settings" className="hover:underline text-lg font-semibold transition pb-2 text-white">
-              Settings
-            </Link>
+            <img src={settingsIcon} alt="Settings" className={styles.navIcon} />
+            <Link to="/settings" className={styles.navLink}>Settings</Link>
           </div>
         </div>
       </header>
 
-      {/* Main content */}
-      <div className="flex-1 p-4 mt-24 flex flex-col md:flex-row items-start">
-        {/* Google Map on the left */}
+      <div className={styles.mainContent}>
         {startLocation && destination && (
-          <div className="w-1/2 h-full">
+          <div className={styles.mapContainer}>
             <GoogleMap
               center={{ lat: 1.3483, lng: 103.6831 }}
               zoom={14}
@@ -309,22 +298,21 @@ const ComparisonPage = () => {
           </div>
         )}
 
-        {/* Route options container on the right */}
-        <div className="pt-28 pb-24 flex-1 flex justify-center items-center px-4">
-          <div className="bg-white p-5 rounded-lg w-full max-w-3xl shadow-lg overflow-y-auto relative h-[70vh] -translate-y-10">
-            <div className="w-full md:w- flex flex-col items-center">
-              <h1 className="text-2xl font-semibold mb-4">Route Comparisons</h1>
+        <div className={styles.routeOptionsContainer}>
+          <div className={styles.routeOptionsContent}>
+            <div className="w-full flex flex-col items-center">
+              <h1 className={styles.heading}>Route Comparisons</h1>
 
               <div className="flex space-x-4 mb-4">
-                <button className={`px-4 py-2 rounded ${sortOption === "price" ? "bg-blue-500 text-white" : "bg-gray-200"}`} onClick={() => setSortOption("price")}>
+                <button className={`${styles.sortButton} ${sortOption === "price" ? styles.activeSortButton : styles.inactiveSortButton}`} onClick={() => setSortOption("price")}>
                   Price
                 </button>
-                <button className={`px-4 py-2 rounded ${sortOption === "time" ? "bg-blue-500 text-white" : "bg-gray-200"}`} onClick={() => setSortOption("time")}>
+                <button className={`${styles.sortButton} ${sortOption === "time" ? styles.activeSortButton : styles.inactiveSortButton}`} onClick={() => setSortOption("time")}>
                   Time
                 </button>
               </div>
 
-              <div className="w-full max-w-lg space-y-4">
+              <div className={styles.optionsContainer}>
                 {combinedOptions.map((option, index) => (
                   option.type && (option.type.includes("Grab") || option.type.includes("Go")) ? (
                     <EHaulingOption
@@ -333,8 +321,8 @@ const ComparisonPage = () => {
                       fare={option.fare}
                       duration={option.duration}
                       logo={option.logo}
-                      onHover={() => handleHover(index, true)} // Pass true for e-hauling options
-                      onLeave={() => handleHover(null, true)} // Clear when not hovered
+                      onHover={() => handleHover(index, true)}
+                      onLeave={() => handleHover(null, true)}
                     />
                   ) : (
                     <RouteOption
@@ -342,8 +330,8 @@ const ComparisonPage = () => {
                       route={option}
                       startLocation={startLocation}
                       destination={destination}
-                      onHover={() => handleHover(option.index, false)} // Pass false for public transport options
-                      onLeave={() => handleHover(null, false)} // Clear when not hovered
+                      onHover={() => handleHover(option.index, false)}
+                      onLeave={() => handleHover(null, false)}
                     />
                   )
                 ))}
@@ -353,9 +341,8 @@ const ComparisonPage = () => {
         </div>
       </div>
 
-      {/* Footer */}
-      <footer className="fixed bottom-0 left-0 right-0 h-16 bg-[#4169E1] text-white text-center flex items-center justify-center">
-        <Link to="/review" className="hover:underline text-lg text-white">
+      <footer className={styles.footer}>
+        <Link to="/review" className={styles.footerLink}>
           <i className="material-icons text-yellow-500 mr-4">star</i>
           Leave us a review
           <i className="material-icons text-yellow-500 ml-4">star</i>
@@ -366,3 +353,25 @@ const ComparisonPage = () => {
 };
 
 export default ComparisonPage;
+
+const styles = {
+  container: "relative min-h-screen flex flex-col",
+  header: "fixed top-0 left-0 right-0 h-24 bg-[#4169E1] text-white z-50 flex items-center justify-between px-4 shadow-md",
+  logo: "w-18 h-14 mr-4",
+  navIcon: "w-14 h-14",
+  navLink: "hover:underline text-lg font-semibold transition pb-2 text-white",
+  mainContent: "flex-1 p-4 mt-24 flex flex-col md:flex-row items-start",
+  mapContainer: "w-1/2 h-full",
+  routeOptionsContainer: "pt-28 pb-24 flex-1 flex justify-center items-center px-4",
+  routeOptionsContent: "bg-white p-5 rounded-lg w-full max-w-3xl shadow-lg overflow-y-auto relative h-[70vh] -translate-y-10",
+  heading: "text-2xl font-semibold mb-4",
+  sortButton: "px-4 py-2 rounded",
+  activeSortButton: "bg-blue-500 text-white",
+  inactiveSortButton: "bg-gray-200",
+  optionsContainer: "w-full max-w-lg space-y-4",
+  routeOption: "flex items-center justify-between p-4 border rounded-lg shadow-md hover:bg-gray-100 cursor-pointer",
+  ehaulingOption: "flex items-center justify-between p-4 border rounded-lg shadow-md hover:bg-gray-100 cursor-pointer",
+  ehaulingLogo: "w-20 h-12",
+  footer: "fixed bottom-0 left-0 right-0 h-16 bg-[#4169E1] text-white text-center flex items-center justify-center",
+  footerLink: "hover:underline text-lg text-white",
+};

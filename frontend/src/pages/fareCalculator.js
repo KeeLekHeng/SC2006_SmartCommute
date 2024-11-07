@@ -26,11 +26,13 @@ export const getGrabFare = (minutes, distance, isSixSeater = false, isPeakPeriod
     } else {
       distanceFare = (10 * (0.25 * 1000 / 400)) + ((distanceInKm - 10) * (0.25 * 1000 / 350)); // S$0.25 per 350m after 10km
     }
-    if (isPeakPeriod) {
-        totalFare *= 1.4;
-    };
   
-    const totalFare = flagdownFare + bookingFee + distanceFare + platformFee;
+    let totalFare = flagdownFare + bookingFee + distanceFare + platformFee;
+
+    if (isPeakPeriod) {
+      totalFare *= 1.4;
+    };
+
     return {
       fare: totalFare.toFixed(2),
       type: 'GoTaxi'
@@ -47,7 +49,7 @@ export function getGoCarFare(distanceInKm, isPeakPeriod) {
     const platformFee = 0.80; // Average platform fee between $0.60 and $1.00
     const transactionFee = Math.min(0.60, Math.max(0.10, distanceInKm * 0.05)); // $0.10 to $0.60
   
-    const totalFare = baseFare + distanceFare + platformFee + transactionFee;
+    let totalFare = baseFare + distanceFare + platformFee + transactionFee;
     if (isPeakPeriod) {
         totalFare *= 1.4;
     };
@@ -64,7 +66,7 @@ export function getGoCarFare(distanceInKm, isPeakPeriod) {
     const platformFee = 0.80; // Average platform fee between $0.60 and $1.00
     const transactionFee = Math.min(0.60, Math.max(0.10, distanceInKm * 0.05)); // $0.10 to $0.60
   
-    const totalFare = baseFare + distanceFare + platformFee + transactionFee;
+    let totalFare = baseFare + distanceFare + platformFee + transactionFee;
     if (isPeakPeriod) {
         totalFare *= 1.4;
     };

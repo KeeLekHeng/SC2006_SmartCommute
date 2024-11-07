@@ -39,7 +39,6 @@ const RegisterPage = () => {
       default:
         break;
     }
-
     setErrors({ ...errors, [name]: '' });
   };
 
@@ -86,7 +85,6 @@ const RegisterPage = () => {
     } catch (error) {
       if (error.response && error.response.data.error) {
         const errorMessage = error.response.data.error.toLowerCase();
-
         if (errorMessage.includes("username")) {
           setErrors({ ...errors, username: error.response.data.error });
         } else if (errorMessage.includes("email")) {
@@ -105,80 +103,71 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className="bg-[#4169E1] flex items-center justify-center h-screen overflow-hidden">
-      <div className="w-11/12 max-w-lg bg-white shadow-lg rounded-lg p-6 mx-4 flex flex-col items-center relative">
+    <div className={styles.container}>
+      <div className={styles.card}>
         
         {/* Back Button */}
-        <button 
-          onClick={() => navigate(-1)}
-          className="absolute top-4 left-4 flex items-center px-6 py-3 bg-gray-200 text-gray-700 rounded-full font-semibold hover:bg-gray-300 shadow transition duration-200"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5 mr-2"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
+        <button onClick={() => navigate(-1)} className={styles.backButton}>
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
         </button>
 
-        <header className="mb-6 text-center">
-          <h2 className="text-[#1D4ED8] text-3xl font-bold">SmartCommute</h2>
+        <header className={styles.header}>
+          <h2 className={styles.title}>SmartCommute</h2>
         </header>
 
-        <h1 className="text-4xl font-bold text-[#1D4ED8] mb-6">Register</h1>
+        <h1 className={styles.pageTitle}>Register</h1>
 
         <main className="w-full">
-          <label className="block text-gray-700 text-left mb-1 text-lg">Enter your Username</label>
+          <label className={styles.label}>Enter your Username</label>
           <input
             type="text"
             name="username"
             placeholder="Username"
-            className="w-full mb-3 p-3 border border-gray-300 rounded-lg"
+            className={styles.input}
             value={username}
             onChange={handleInputChange}
           />
-          {errors.username && <p className="text-red-500 text-sm">{errors.username}</p>}
+          {errors.username && <p className={styles.errorText}>{errors.username}</p>}
 
-          <label className="block text-gray-700 text-left mb-1 text-lg">Enter your Email</label>
+          <label className={styles.label}>Enter your Email</label>
           <input
             type="email"
             name="email"
             placeholder="Email"
-            className="w-full mb-3 p-3 border border-gray-300 rounded-lg"
+            className={styles.input}
             value={email}
             onChange={handleInputChange}
           />
-          {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
+          {errors.email && <p className={styles.errorText}>{errors.email}</p>}
 
-          <label className="block text-gray-700 text-left mb-1 text-lg">Enter your Password</label>
+          <label className={styles.label}>Enter your Password</label>
           <input
             type="password"
             name="password"
             placeholder="Password"
-            className="w-full mb-3 p-3 border border-gray-300 rounded-lg"
+            className={styles.input}
             value={password}
             onChange={handleInputChange}
           />
-          {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
+          {errors.password && <p className={styles.errorText}>{errors.password}</p>}
 
-          <label className="block text-gray-700 text-left mb-1 text-lg">Security Question: What is your favourite fruit?</label>
+          <label className={styles.label}>Security Question: What is your favourite fruit?</label>
           <input
             type="text"
             name="fruits"
             placeholder="This is for Password Recovery"
-            className="w-full mb-3 p-3 border border-gray-300 rounded-lg"
+            className={styles.input}
             value={fruits}
             onChange={handleInputChange}
           />
-          {errors.fruits && <p className="text-red-500 text-sm">{errors.fruits}</p>}
+          {errors.fruits && <p className={styles.errorText}>{errors.fruits}</p>}
 
-          <label className="block text-gray-700 text-left mb-1 text-lg">Select your Gender</label>
+          <label className={styles.label}>Select your Gender</label>
           <select
             name="gender"
-            className="w-full mb-3 p-3 border border-gray-300 rounded-lg"
+            className={styles.select}
             value={gender}
             onChange={handleInputChange}
           >
@@ -186,23 +175,17 @@ const RegisterPage = () => {
             <option value="male">Male</option>
             <option value="female">Female</option>
           </select>
-          {errors.gender && <p className="text-red-500 text-sm">{errors.gender}</p>}
+          {errors.gender && <p className={styles.errorText}>{errors.gender}</p>}
 
-          {errors.general && <p className="text-red-500 text-sm mt-2">{errors.general}</p>}
+          {errors.general && <p className={styles.errorText}>{errors.general}</p>}
 
-          <button
-            className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-3 px-6 rounded-lg font-bold text-lg hover:from-[#1E40AF] hover:to-[#2563EB] transition duration-300 shadow-md hover:shadow-lg mb-4"
-            onClick={handleRegisterClick}
-          >
+          <button onClick={handleRegisterClick} className={styles.registerButton}>
             Register
           </button>
 
-          <p className="text-center text-gray-600">
+          <p className={styles.loginText}>
             Already have an account?{' '}
-            <button
-              className="text-[#1D4ED8] font-bold cursor-pointer hover:underline"
-              onClick={handleLoginClick}
-            >
+            <button onClick={handleLoginClick} className={styles.loginLink}>
               Login
             </button>
           </p>
@@ -210,6 +193,22 @@ const RegisterPage = () => {
       </div>
     </div>
   );
+};
+
+const styles = {
+  container: "bg-[#4169E1] flex items-center justify-center h-screen overflow-hidden",
+  card: "w-11/12 max-w-lg bg-white shadow-lg rounded-lg p-6 mx-4 flex flex-col items-center relative",
+  backButton: "absolute top-4 left-4 flex items-center px-6 py-3 bg-gray-200 text-gray-700 rounded-full font-semibold hover:bg-gray-300 shadow transition duration-200",
+  header: "mb-6 text-center",
+  title: "text-[#1D4ED8] text-3xl font-bold",
+  pageTitle: "text-4xl font-bold text-[#1D4ED8] mb-6",
+  label: "block text-gray-700 text-left mb-1 text-lg",
+  input: "w-full mb-3 p-3 border border-gray-300 rounded-lg",
+  select: "w-full mb-3 p-3 border border-gray-300 rounded-lg",
+  errorText: "text-red-500 text-sm",
+  registerButton: "w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-3 px-6 rounded-lg font-bold text-lg hover:from-[#1E40AF] hover:to-[#2563EB] transition duration-300 shadow-md hover:shadow-lg mb-4",
+  loginText: "text-center text-gray-600",
+  loginLink: "text-[#1D4ED8] font-bold cursor-pointer hover:underline",
 };
 
 export default RegisterPage;
